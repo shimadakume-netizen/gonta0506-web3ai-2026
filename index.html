@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>余裕乗り換えナビ</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+      background: #0f0f1a;
+      color: #fff;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a3e 50%, #0f0f1a 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(99,102,241,0.2);
+      border: 1px solid rgba(99,102,241,0.5);
+      color: #a5b4fc;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: #94a3b8;
+      max-width: 540px;
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+    }
+    .cta {
+      display: inline-block;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff;
+      padding: 0.9rem 2.5rem;
+      border-radius: 100px;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 4px 24px rgba(99,102,241,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(99,102,241,0.6);
+    }
+
+    /* PAIN SECTION */
+    .section {
+      padding: 5rem 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .section-label {
+      color: #6366f1;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .section h2 {
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    .section .sub {
+      color: #64748b;
+      font-size: 1rem;
+      margin-bottom: 3rem;
+      line-height: 1.7;
+    }
+
+    /* PAIN CARDS */
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+    .pain-card {
+      background: #1e1e3a;
+      border: 1px solid #2d2d5a;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      transition: border-color 0.2s;
+    }
+    .pain-card:hover { border-color: #6366f1; }
+    .pain-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+    .pain-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .pain-card p { color: #64748b; font-size: 0.9rem; line-height: 1.6; }
+
+    /* VPC SECTION */
+    .vpc-section {
+      background: #13132a;
+      padding: 5rem 1.5rem;
+    }
+    .vpc-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .vpc-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+    }
+    .vpc-table th {
+      background: #1e1e3a;
+      color: #a5b4fc;
+      font-size: 0.85rem;
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border: 1px solid #2d2d5a;
+    }
+    .vpc-table td {
+      padding: 0.85rem 1rem;
+      border: 1px solid #2d2d5a;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+    .vpc-table .star { color: #fbbf24; font-weight: 700; }
+
+    /* SOLUTION */
+    .solution-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+    .sol-card {
+      background: linear-gradient(135deg, #1e1e3a, #2d1f5a);
+      border: 1px solid #3d2d7a;
+      border-radius: 1rem;
+      padding: 1.5rem;
+    }
+    .sol-card h3 { color: #a5b4fc; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .sol-card p { color: #cbd5e1; font-size: 0.9rem; line-height: 1.7; }
+
+    /* BUG LIST */
+    .bug-section { padding: 5rem 1.5rem; max-width: 900px; margin: 0 auto; }
+    .bug-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 0.6rem; margin-top: 2rem; }
+    .bug-list li {
+      background: #1e1e3a;
+      border: 1px solid #2d2d5a;
+      border-radius: 0.5rem;
+      padding: 0.65rem 1rem;
+      font-size: 0.88rem;
+      color: #94a3b8;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .bug-list li span { color: #6366f1; font-weight: 700; min-width: 1.5rem; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: #334155;
+      font-size: 0.85rem;
+      border-top: 1px solid #1e1e3a;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge">🚃 通学生のための新体験</div>
+    <h1>もう乗り換えで<br>走らなくていい。</h1>
+    <p>混雑・乗り換え時間を考慮して、<br>座れる・走らなくて済む通学ルートを提案する<br>余裕乗り換えナビアプリ</p>
+    <a href="#vpc" class="cta">詳しく見る</a>
+  </section>
+
+  <!-- PAIN -->
+  <section style="padding: 5rem 1.5rem; background: #0f0f1a;">
+    <div style="max-width:900px; margin:0 auto;">
+      <div class="section-label">Problem</div>
+      <h2>毎朝の通学、こんな悩みありませんか？</h2>
+      <p class="sub" style="margin-top:0.5rem;">電車通学の大学生が抱えるリアルな3大ストレス</p>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="pain-icon">🏃</div>
+          <h3>乗り換えダッシュが毎回しんどい</h3>
+          <p>接続時間が短すぎてホームまで毎回全力疾走。大学着く前から疲れてる。</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">😮‍💨</div>
+          <h3>往復2時間がただ消える</h3>
+          <p>満員電車でスマホも出せず、何もできないまま2時間が消費されていく。</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">💺</div>
+          <h3>座れる電車がわからない</h3>
+          <p>どの時間帯・どの車両に乗れば座れるのか全くわからない。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VPC -->
+  <section class="vpc-section" id="vpc">
+    <div class="vpc-inner">
+      <div class="section-label">Value Proposition Canvas</div>
+      <h2>VPC v1</h2>
+      <p class="sub" style="margin-top:0.5rem; color:#64748b;">顧客の課題と解決策の整合性を確認したキャンバス</p>
+      <table class="vpc-table">
+        <tr>
+          <th>項目</th>
+          <th>★ 最重要</th>
+          <th>その他</th>
+        </tr>
+        <tr>
+          <td><strong>Jobs</strong></td>
+          <td class="star">★ 通学2時間を無駄にしたくない</td>
+          <td>遅刻せず着く / 疲れずに到着したい</td>
+        </tr>
+        <tr>
+          <td><strong>Pains</strong></td>
+          <td class="star">★ 乗り換えダッシュがしんどい・毎回ギリギリ</td>
+          <td>スマホも出せない / 立ちっぱなしで消耗</td>
+        </tr>
+        <tr>
+          <td><strong>Gains</strong></td>
+          <td class="star">★ 座って余裕を持って移動できる</td>
+          <td>通学中に作業できる / 大学着いても疲れていない</td>
+        </tr>
+        <tr>
+          <td><strong>Pain Relievers</strong></td>
+          <td colspan="2">乗り換え余裕ルートの自動提案 / 「今出れば間に合う」事前通知</td>
+        </tr>
+        <tr>
+          <td><strong>Gain Creators</strong></td>
+          <td colspan="2">空き車両・乗車位置案内 / 一本早い電車へのリマインダー</td>
+        </tr>
+        <tr>
+          <td><strong>Product</strong></td>
+          <td colspan="2">余裕乗り換えナビアプリ</td>
+        </tr>
+      </table>
+
+      <div class="solution-grid" style="margin-top:3rem;">
+        <div class="sol-card">
+          <h3>Pain Relievers</h3>
+          <p>乗り換えに余裕のあるルートを自動提案。「今出れば次の電車でも乗り換えられる」を事前通知。</p>
+        </div>
+        <div class="sol-card">
+          <h3>Gain Creators</h3>
+          <p>空いている車両・乗車位置をガイド。一本早い電車に乗るためのリマインダーを朝に配信。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUG LIST -->
+  <section class="bug-section">
+    <div class="section-label">Bug List</div>
+    <h2>日常のバグリスト 20個</h2>
+    <p class="sub" style="margin-top:0.5rem; color:#64748b;">このプロダクトのきっかけになった、リアルな日常の不満・不便</p>
+    <ul class="bug-list">
+      <li><span>1</span>朝の通学電車が混みすぎて体が疲れ、大学着いた時点でもう消耗している</li>
+      <li><span>2</span>乗り換えの接続時間が短すぎて、ホームまで毎回走らないといけない</li>
+      <li><span>3</span>往復2時間の通学がただ消えていく、使えない時間になっている</li>
+      <li><span>4</span>電車が混んでいてカバンからスマホすら出せない</li>
+      <li><span>5</span>通学中に何か勉強しようとしても混んでいて何もできない</li>
+      <li><span>6</span>退屈な授業がとにかく多く、座っているだけで眠くなる</li>
+      <li><span>7</span>眠気を覚ますためコーヒーを飲みすぎて吐き気がする</li>
+      <li><span>8</span>眠い状態で授業を受けても頭に入らず、結局後で復習が必要になる</li>
+      <li><span>9</span>授業でAIを使えば効率的なのに「AI禁止」と言われる理由がわからない</li>
+      <li><span>10</span>AIを学ぼうとすると有料プランが必要でお金がかかる</li>
+      <li><span>11</span>家族LINEの通知が多くて返信が追いつかない</li>
+      <li><span>12</span>友達グループLINEが24時間飛んできてキリがない</li>
+      <li><span>13</span>バイト先のLINE（シフト変更など）が急に来て断りにくい</li>
+      <li><span>14</span>大学の食堂が昼休みに混みすぎて並ぶだけで時間がなくなる</li>
+      <li><span>15</span>使っていない月もサブスクの料金が引き落とされる</li>
+      <li><span>16</span>サブスクの解約手続きを自分で管理しないといけない</li>
+      <li><span>17</span>複数のサブスクが毎月いくら引き落とされているか把握できていない</li>
+      <li><span>18</span>朝、何時に起きれば間に合うか毎日計算するのが面倒</li>
+      <li><span>19</span>授業の資料が毎回違うサイト・アプリに散らばっていて管理が大変</li>
+      <li><span>20</span>バイトと授業のスケジュール管理がLINEとカレンダーで二重になっている</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>余裕乗り換えナビ — WEB3 AI 第3回課題 / Discord: gonta0506</p>
+  </footer>
+
+</body>
+</html>
