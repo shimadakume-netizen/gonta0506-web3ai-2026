@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>余裕乗り換えナビ — プロトタイプ v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --bg:#0f0f1a;
+    --surface:#16182a;
+    --surface2:#1e2035;
+    --indigo:#6366f1;
+    --indigo-light:#818cf8;
+    --green:#22c55e;
+    --yellow:#facc15;
+    --red:#ef4444;
+    --text:#e2e8f0;
+    --muted:#94a3b8;
+    --border:rgba(99,102,241,0.2);
+  }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Noto Sans JP',sans-serif;
+    min-height:100vh;
+    padding-bottom:3rem;
+  }
+
+  /* ── HEADER ── */
+  header{
+    background:linear-gradient(135deg,#0f0f1a 0%,#1a1a2e 100%);
+    border-bottom:1px solid var(--border);
+    padding:1.25rem 1rem 1rem;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  header::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:radial-gradient(ellipse 60% 80% at 50% 0%,rgba(99,102,241,0.15) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .logo{font-size:1.6rem;font-weight:900;letter-spacing:-0.02em;}
+  .logo span{color:var(--indigo-light);}
+  .tagline{font-size:0.78rem;color:var(--muted);margin-top:0.2rem;letter-spacing:0.05em;}
+  .beta-badge{
+    display:inline-block;
+    background:rgba(99,102,241,0.2);
+    border:1px solid var(--indigo);
+    border-radius:99px;
+    font-size:0.65rem;
+    color:var(--indigo-light);
+    padding:0.15rem 0.6rem;
+    margin-top:0.5rem;
+    letter-spacing:0.08em;
+  }
+
+  /* ── MAIN ── */
+  main{max-width:640px;margin:0 auto;padding:0 1rem;}
+
+  /* ── SEARCH CARD ── */
+  .search-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:1.5rem 1.25rem 1.25rem;
+    margin-top:1.5rem;
+  }
+  .search-title{
+    font-size:0.8rem;
+    font-weight:700;
+    color:var(--indigo-light);
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    margin-bottom:1rem;
+  }
+  .station-row{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    gap:0.5rem;
+    align-items:center;
+    margin-bottom:1rem;
+  }
+  .station-row .arrow-icon{
+    font-size:1.2rem;
+    text-align:center;
+    color:var(--indigo-light);
+    cursor:pointer;
+    transition:transform 0.3s;
+    user-select:none;
+  }
+  .station-row .arrow-icon:hover{transform:scale(1.2);}
+  select, input[type="time"]{
+    width:100%;
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    color:var(--text);
+    font-family:'Noto Sans JP',sans-serif;
+    font-size:0.9rem;
+    padding:0.65rem 0.75rem;
+    outline:none;
+    transition:border-color 0.2s;
+    -webkit-appearance:none;
+  }
+  select:focus, input[type="time"]:focus{border-color:var(--indigo);}
+  .time-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0.75rem;
+    margin-bottom:1.25rem;
+  }
+  .field-label{
+    font-size:0.7rem;
+    color:var(--muted);
+    margin-bottom:0.3rem;
+    letter-spacing:0.05em;
+  }
+  .search-btn{
+    width:100%;
+    background:var(--indigo);
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    font-family:'Noto Sans JP',sans-serif;
+    font-size:1rem;
+    font-weight:700;
+    padding:0.85rem;
+    cursor:pointer;
+    transition:all 0.2s;
+    letter-spacing:0.03em;
+  }
+  .search-btn:hover{background:var(--indigo-light);transform:translateY(-1px);}
+  .search-btn:active{transform:translateY(0);}
+
+  /* ── LOADING ── */
+  .loading{
+    display:none;
+    text-align:center;
+    padding:2rem;
+    color:var(--muted);
+    font-size:0.9rem;
+  }
+  .loading.show{display:block;}
+  .dot-spin{
+    display:inline-block;
+    width:36px;height:36px;
+    border:3px solid rgba(99,102,241,0.2);
+    border-top-color:var(--indigo);
+    border-radius:50%;
+    animation:spin 0.8s linear infinite;
+    margin-bottom:0.75rem;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ── RESULTS ── */
+  #results{margin-top:1.5rem;display:none;}
+  #results.show{display:block;}
+
+  .results-label{
+    font-size:0.75rem;
+    font-weight:700;
+    color:var(--muted);
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    margin-bottom:0.75rem;
+    padding:0 0.25rem;
+  }
+
+  .route-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0.75rem;
+    margin-bottom:1rem;
+  }
+  @media(max-width:420px){.route-grid{grid-template-columns:1fr;}}
+
+  .route-card{
+    background:var(--surface);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:14px;
+    padding:1rem;
+    position:relative;
+    overflow:hidden;
+  }
+  .route-card.recommended{
+    border-color:rgba(34,197,94,0.4);
+    background:linear-gradient(135deg,rgba(34,197,94,0.05) 0%,var(--surface) 100%);
+  }
+  .route-card.normal{
+    border-color:rgba(239,68,68,0.3);
+  }
+  .rec-badge{
+    position:absolute;
+    top:0.6rem;right:0.6rem;
+    background:var(--green);
+    color:#fff;
+    font-size:0.6rem;
+    font-weight:700;
+    padding:0.15rem 0.45rem;
+    border-radius:99px;
+    letter-spacing:0.05em;
+  }
+
+  .card-type{
+    font-size:0.65rem;
+    font-weight:700;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    margin-bottom:0.5rem;
+  }
+  .card-type.n{color:#ef8080;}
+  .card-type.r{color:var(--green);}
+
+  .time-display{
+    font-size:1.5rem;
+    font-weight:900;
+    letter-spacing:-0.02em;
+    line-height:1;
+    margin-bottom:0.15rem;
+  }
+  .time-display.n{color:#ef8080;}
+  .time-display.r{color:var(--green);}
+
+  .duration-tag{
+    font-size:0.72rem;
+    color:var(--muted);
+    margin-bottom:0.9rem;
+  }
+
+  .section-label{
+    font-size:0.6rem;
+    color:var(--muted);
+    font-weight:700;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    margin-bottom:0.3rem;
+    margin-top:0.6rem;
+  }
+
+  /* Transfer buffer */
+  .transfer-row{
+    display:flex;
+    align-items:center;
+    gap:0.35rem;
+    font-size:0.78rem;
+    margin-bottom:0.7rem;
+  }
+  .buffer-badge{
+    font-size:0.7rem;
+    font-weight:700;
+    padding:0.1rem 0.4rem;
+    border-radius:6px;
+  }
+  .buf-red{background:rgba(239,68,68,0.2);color:#ef8080;border:1px solid rgba(239,68,68,0.3);}
+  .buf-yellow{background:rgba(250,204,21,0.15);color:var(--yellow);border:1px solid rgba(250,204,21,0.3);}
+  .buf-green{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+
+  /* Meter bar */
+  .meter-bar{
+    height:6px;
+    background:rgba(255,255,255,0.08);
+    border-radius:99px;
+    overflow:hidden;
+    margin-bottom:0.8rem;
+  }
+  .meter-fill{
+    height:100%;
+    border-radius:99px;
+    transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+    width:0%;
+  }
+  .meter-fill.red{background:linear-gradient(90deg,#ef4444,#f87171);}
+  .meter-fill.yellow{background:linear-gradient(90deg,#d97706,#facc15);}
+  .meter-fill.green{background:linear-gradient(90deg,#16a34a,#22c55e);}
+  .meter-label-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.62rem;
+    color:var(--muted);
+    margin-bottom:0.2rem;
+  }
+
+  /* ── INSIGHT CARD ── */
+  .insight-card{
+    background:linear-gradient(135deg,rgba(99,102,241,0.12) 0%,rgba(99,102,241,0.05) 100%);
+    border:1px solid rgba(99,102,241,0.3);
+    border-radius:14px;
+    padding:1rem 1.1rem;
+    margin-bottom:0.75rem;
+    display:flex;
+    align-items:flex-start;
+    gap:0.75rem;
+  }
+  .insight-icon{font-size:1.5rem;flex-shrink:0;}
+  .insight-text{font-size:0.82rem;line-height:1.6;color:var(--text);}
+  .insight-text strong{color:var(--indigo-light);}
+
+  /* ── NOTIFY CARD ── */
+  .notify-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:1rem 1.1rem;
+    margin-bottom:0.75rem;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:0.75rem;
+  }
+  .notify-text{font-size:0.8rem;line-height:1.5;color:var(--muted);}
+  .notify-text strong{color:var(--text);}
+  .remind-btn{
+    background:var(--indigo);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    font-family:'Noto Sans JP',sans-serif;
+    font-size:0.75rem;
+    font-weight:700;
+    padding:0.55rem 0.9rem;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all 0.2s;
+    flex-shrink:0;
+  }
+  .remind-btn.active{background:#16a34a;}
+  .remind-btn:hover{filter:brightness(1.15);}
+
+  /* ── SEAT CARD ── */
+  .seat-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:1rem 1.1rem;
+    margin-bottom:0.75rem;
+  }
+  .seat-title{
+    font-size:0.72rem;
+    font-weight:700;
+    color:var(--indigo-light);
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    margin-bottom:0.75rem;
+  }
+  .car-grid{
+    display:grid;
+    grid-template-columns:repeat(10,1fr);
+    gap:3px;
+    margin-bottom:0.4rem;
+  }
+  .car-block{
+    aspect-ratio:1;
+    border-radius:3px;
+    font-size:0.5rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .car-empty{background:rgba(34,197,94,0.25);}
+  .car-crowded{background:rgba(239,68,68,0.3);}
+  .car-medium{background:rgba(250,204,21,0.2);}
+  .car-hint{font-size:0.62rem;color:var(--muted);margin-top:0.2rem;}
+
+  /* ── TOAST ── */
+  .toast{
+    position:fixed;
+    bottom:1.5rem;
+    left:50%;
+    transform:translateX(-50%) translateY(6px);
+    background:#1e2035;
+    border:1px solid var(--green);
+    border-radius:10px;
+    padding:0.6rem 1.2rem;
+    font-size:0.82rem;
+    color:var(--green);
+    font-weight:700;
+    opacity:0;
+    pointer-events:none;
+    transition:all 0.3s;
+    white-space:nowrap;
+    z-index:999;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ── EMPTY STATE ── */
+  .empty-state{
+    text-align:center;
+    padding:3rem 1rem;
+    color:var(--muted);
+    font-size:0.85rem;
+  }
+  .empty-icon{font-size:2.5rem;margin-bottom:0.75rem;display:block;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🚃 余裕<span>乗り換えナビ</span></div>
+  <div class="tagline">ギリギリ乗り換えを、もうやめよう。</div>
+  <div class="beta-badge">PROTOTYPE v1</div>
+</header>
+
+<main>
+
+  <!-- Search Card -->
+  <div class="search-card">
+    <div class="search-title">🔍 ルート検索</div>
+
+    <div class="station-row">
+      <div>
+        <div class="field-label">出発駅</div>
+        <select id="fromStation">
+          <option value="渋谷">渋谷</option>
+          <option value="新宿">新宿</option>
+          <option value="池袋">池袋</option>
+          <option value="品川">品川</option>
+          <option value="横浜">横浜</option>
+          <option value="東京">東京</option>
+          <option value="秋葉原">秋葉原</option>
+          <option value="上野">上野</option>
+        </select>
+      </div>
+      <div class="arrow-icon" onclick="swapStations()" title="入れ替え">⇄</div>
+      <div>
+        <div class="field-label">到着駅</div>
+        <select id="toStation">
+          <option value="新宿">新宿</option>
+          <option value="渋谷">渋谷</option>
+          <option value="池袋">池袋</option>
+          <option value="品川">品川</option>
+          <option value="横浜">横浜</option>
+          <option value="東京">東京</option>
+          <option value="秋葉原">秋葉原</option>
+          <option value="上野">上野</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="time-row">
+      <div>
+        <div class="field-label">出発時刻</div>
+        <input type="time" id="depTime" value="08:30">
+      </div>
+      <div>
+        <div class="field-label">希望到着</div>
+        <input type="time" id="arrTime" value="09:30">
+      </div>
+    </div>
+
+    <button class="search-btn" onclick="doSearch()">余裕ルートを探す →</button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="dot-spin"></div><br>
+    AIがルートを解析中...
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="results-label" id="resultsLabel"></div>
+
+    <div class="route-grid">
+      <!-- 通常ルート -->
+      <div class="route-card normal">
+        <div class="card-type n">通常ルート</div>
+        <div class="time-display n" id="normalTime">−</div>
+        <div class="duration-tag" id="normalDuration">−</div>
+
+        <div class="section-label">乗り換えバッファ</div>
+        <div class="transfer-row">
+          <span id="normalTransferStation">−</span>
+          <span class="buffer-badge buf-red" id="normalBuffer">−</span>
+        </div>
+
+        <div class="section-label">混雑度</div>
+        <div class="meter-label-row"><span>空き</span><span id="normalCrowdPct">−</span></div>
+        <div class="meter-bar"><div class="meter-fill red" id="normalCrowdBar"></div></div>
+
+        <div class="section-label">座席確保率</div>
+        <div class="meter-label-row"><span>低</span><span id="normalSeatPct">−</span></div>
+        <div class="meter-bar"><div class="meter-fill red" id="normalSeatBar"></div></div>
+      </div>
+
+      <!-- 余裕ルート -->
+      <div class="route-card recommended">
+        <div class="rec-badge">おすすめ</div>
+        <div class="card-type r">余裕ルート</div>
+        <div class="time-display r" id="yoyuuTime">−</div>
+        <div class="duration-tag" id="yoyuuDuration">−</div>
+
+        <div class="section-label">乗り換えバッファ</div>
+        <div class="transfer-row">
+          <span id="yoyuuTransferStation">−</span>
+          <span class="buffer-badge buf-green" id="yoyuuBuffer">−</span>
+        </div>
+
+        <div class="section-label">混雑度</div>
+        <div class="meter-label-row"><span>空き</span><span id="yoyuuCrowdPct">−</span></div>
+        <div class="meter-bar"><div class="meter-fill green" id="yoyuuCrowdBar"></div></div>
+
+        <div class="section-label">座席確保率</div>
+        <div class="meter-label-row"><span>低</span><span id="yoyuuSeatPct">−</span></div>
+        <div class="meter-bar"><div class="meter-fill green" id="yoyuuSeatBar"></div></div>
+      </div>
+    </div>
+
+    <!-- Insight Card -->
+    <div class="insight-card" id="insightCard">
+      <div class="insight-icon">💡</div>
+      <div class="insight-text" id="insightText"></div>
+    </div>
+
+    <!-- Seat Position Card -->
+    <div class="seat-card">
+      <div class="seat-title">🪑 乗車位置ガイド（余裕ルート）</div>
+      <div class="car-grid" id="carGrid"></div>
+      <div class="car-hint">緑: 空き余裕あり　黄: やや混雑　赤: 混雑（避けるのがおすすめ）</div>
+      <div style="font-size:0.72rem;color:var(--indigo-light);margin-top:0.6rem;" id="boardingHint"></div>
+    </div>
+
+    <!-- Notify Card -->
+    <div class="notify-card">
+      <div class="notify-text">
+        <strong>出発リマインダー</strong><br>
+        乗り換え<span id="notifyMinutes">5</span>分前に通知します
+      </div>
+      <button class="remind-btn" id="remindBtn" onclick="toggleRemind()">🔔 セット</button>
+    </div>
+
+  </div><!-- /results -->
+
+  <!-- Empty state (initial) -->
+  <div class="empty-state" id="emptyState">
+    <span class="empty-icon">🚃</span>
+    出発駅・到着駅・時刻を選んで<br>「余裕ルートを探す」を押してください
+  </div>
+
+</main>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Mock Data ─────────────────────────────────────────────────────────────
+const ROUTES = {
+  "渋谷→新宿": {
+    normal: { time:"08:35→08:51", dur:"16分", transfer:"代々木", bufMin:2, crowd:82, seat:18 },
+    yoyuu:  { time:"08:32→08:55", dur:"23分", transfer:"代々木", bufMin:9, crowd:44, seat:71, depart:4 },
+    insight:"通常ルートは代々木での乗り換えがギリギリ2分。余裕ルートは9分確保できるので、ホームが混んでも安心です。"
+  },
+  "渋谷→池袋": {
+    normal: { time:"08:33→09:02", dur:"29分", transfer:"新宿", bufMin:3, crowd:88, seat:12 },
+    yoyuu:  { time:"08:28→09:05", dur:"37分", transfer:"新宿", bufMin:12, crowd:52, seat:65, depart:7 },
+    insight:"通常ルートは新宿乗り換え3分。朝ラッシュ時は混雑で間に合わないリスクあり。余裕ルートで12分確保すれば心拍数を正常に保てます。"
+  },
+  "渋谷→東京": {
+    normal: { time:"08:35→09:10", dur:"35分", transfer:"品川", bufMin:2, crowd:91, seat:8 },
+    yoyuu:  { time:"08:30→09:12", dur:"42分", transfer:"恵比寿", bufMin:10, crowd:38, seat:78, depart:5 },
+    insight:"山手線→東海道線の品川乗り換えは朝のラッシュ最大のボトルネック。恵比寿経由の余裕ルートで混雑を回避できます。"
+  },
+  "新宿→東京": {
+    normal: { time:"08:32→09:00", dur:"28分", transfer:"秋葉原", bufMin:3, crowd:85, seat:15 },
+    yoyuu:  { time:"08:27→09:03", dur:"36分", transfer:"秋葉原", bufMin:11, crowd:42, seat:68, depart:6 },
+    insight:"中央線快速は新宿発が超満員。余裕ルートは6分早く出発するだけで座席確保率が68%まで跳ね上がります。"
+  },
+  "新宿→池袋": {
+    normal: { time:"08:34→08:44", dur:"10分", transfer:"−", bufMin:0, crowd:78, seat:20 },
+    yoyuu:  { time:"08:30→08:48", dur:"18分", transfer:"−", bufMin:0, crowd:35, seat:72, depart:4 },
+    insight:"山手線で直通なので乗り換えなし。余裕ルートは4分早い電車で混雑を大幅に回避。座席確保率が3.6倍に！"
+  },
+  "池袋→東京": {
+    normal: { time:"08:36→09:05", dur:"29分", transfer:"神田", bufMin:2, crowd:89, seat:11 },
+    yoyuu:  { time:"08:30→09:08", dur:"38分", transfer:"神田", bufMin:9, crowd:50, seat:62, depart:6 },
+    insight:"神田での乗り換えバッファが2分→9分に。2分だと少し走ることになりますが、9分なら余裕でトイレも行けます。"
+  },
+  "品川→東京": {
+    normal: { time:"08:38→08:52", dur:"14分", transfer:"−", bufMin:0, crowd:87, seat:13 },
+    yoyuu:  { time:"08:33→08:55", dur:"22分", transfer:"−", bufMin:0, crowd:41, seat:70, depart:5 },
+    insight:"東海道線直通。5分早い電車でグリーン車込みの混雑を回避。座席確保率が5倍以上になります。"
+  },
+  "横浜→新宿": {
+    normal: { time:"08:25→09:10", dur:"45分", transfer:"渋谷", bufMin:3, crowd:90, seat:9 },
+    yoyuu:  { time:"08:15→09:14", dur:"59分", transfer:"武蔵小杉", bufMin:11, crowd:48, seat:60, depart:10 },
+    insight:"渋谷乗り換え3分は朝の横須賀線→副都心線で最も危険な区間。武蔵小杉経由で11分確保＋混雑回避が最善策です。"
+  },
+  "秋葉原→池袋": {
+    normal: { time:"08:40→09:02", dur:"22分", transfer:"上野", bufMin:3, crowd:76, seat:22 },
+    yoyuu:  { time:"08:35→09:05", dur:"30分", transfer:"上野", bufMin:10, crowd:43, seat:65, depart:5 },
+    insight:"上野での乗り換えは朝のラッシュで3分では地下鉄ホームまで厳しい。10分確保でコンビニ寄り道も可能になります。"
+  }
+};
+
+function getKey(from, to) {
+  const k1 = from + "→" + to;
+  const k2 = to + "→" + from;
+  if (ROUTES[k1]) return k1;
+  if (ROUTES[k2]) return k2; // reverse fallback
+  return null;
+}
+
+// ── Station Swap ───────────────────────────────────────────────────────────
+function swapStations() {
+  const f = document.getElementById('fromStation');
+  const t = document.getElementById('toStation');
+  const tmp = f.value;
+  f.value = t.value;
+  t.value = tmp;
+}
+
+// ── Search ────────────────────────────────────────────────────────────────
+function doSearch() {
+  const from = document.getElementById('fromStation').value;
+  const to   = document.getElementById('toStation').value;
+
+  if (from === to) {
+    showToast('出発駅と到着駅が同じです');
+    return;
+  }
+
+  // hide results, show loading
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('loading').classList.add('show');
+
+  setTimeout(() => {
+    document.getElementById('loading').classList.remove('show');
+    renderResults(from, to);
+  }, 1100);
+}
+
+// ── Render Results ────────────────────────────────────────────────────────
+function renderResults(from, to) {
+  const key = getKey(from, to);
+  let data;
+
+  if (key) {
+    data = ROUTES[key];
+  } else {
+    // Generate fallback mock
+    data = generateFallback(from, to);
+  }
+
+  const depTime = document.getElementById('depTime').value;
+
+  // Label
+  document.getElementById('resultsLabel').textContent =
+    from + ' → ' + to + '  検索結果';
+
+  // Normal route
+  const n = data.normal;
+  document.getElementById('normalTime').textContent     = n.time;
+  document.getElementById('normalDuration').textContent = n.dur + ' ・ ' + (n.transfer === '−' ? '直通' : n.transfer + '乗換');
+  document.getElementById('normalTransferStation').textContent = n.transfer === '−' ? '直通（乗換なし）' : n.transfer;
+  setBuffer('normalBuffer', n.bufMin, n.transfer);
+  document.getElementById('normalCrowdPct').textContent = n.crowd + '%';
+  document.getElementById('normalSeatPct').textContent  = n.seat  + '%';
+
+  // Yoyuu route
+  const y = data.yoyuu;
+  document.getElementById('yoyuuTime').textContent     = y.time;
+  document.getElementById('yoyuuDuration').textContent = y.dur + ' ・ ' + (y.transfer === '−' ? '直通' : y.transfer + '乗換');
+  document.getElementById('yoyuuTransferStation').textContent = y.transfer === '−' ? '直通（乗換なし）' : y.transfer;
+  setBuffer('yoyuuBuffer', y.bufMin, y.transfer, true);
+  document.getElementById('yoyuuCrowdPct').textContent = y.crowd + '%';
+  document.getElementById('yoyuuSeatPct').textContent  = y.seat  + '%';
+
+  // Insight
+  document.getElementById('insightText').innerHTML = data.insight
+    .replace(/(\d+分)/g, '<strong>$1</strong>')
+    .replace(/(余裕ルート|通常ルート)/g, '<strong>$1</strong>');
+
+  // Notify minutes
+  document.getElementById('notifyMinutes').textContent = y.transfer === '−' ? '3' : '5';
+
+  // Car grid
+  renderCarGrid(y.crowd);
+  document.getElementById('boardingHint').textContent =
+    '▶ ' + (y.transfer !== '−' ? y.transfer + '乗換ホームに近い' : '') + '先頭から3〜4両目が最も空いています';
+
+  // Show results
+  document.getElementById('results').classList.add('show');
+  // Reset remind button
+  const rb = document.getElementById('remindBtn');
+  rb.textContent = '🔔 セット';
+  rb.classList.remove('active');
+
+  // Animate bars after a tick
+  setTimeout(() => {
+    animateBar('normalCrowdBar', n.crowd, 'red');
+    animateBar('normalSeatBar',  n.seat,  n.seat < 30 ? 'red' : 'yellow');
+    animateBar('yoyuuCrowdBar',  y.crowd, y.crowd < 50 ? 'green' : 'yellow');
+    animateBar('yoyuuSeatBar',   y.seat,  y.seat > 60  ? 'green' : 'yellow');
+  }, 50);
+}
+
+function setBuffer(id, min, station, isYoyuu) {
+  const el = document.getElementById(id);
+  if (station === '−') {
+    el.textContent = '直通';
+    el.className = 'buffer-badge buf-green';
+    return;
+  }
+  el.textContent = min + '分';
+  if (min <= 3) {
+    el.className = 'buffer-badge buf-red';
+  } else if (min <= 6) {
+    el.className = 'buffer-badge buf-yellow';
+  } else {
+    el.className = 'buffer-badge buf-green';
+  }
+}
+
+function animateBar(id, pct, color) {
+  const el = document.getElementById(id);
+  el.className = 'meter-fill ' + color;
+  el.style.width = pct + '%';
+}
+
+function renderCarGrid(crowdPct) {
+  const grid = document.getElementById('carGrid');
+  grid.innerHTML = '';
+  // 10 cars
+  for (let i = 0; i < 10; i++) {
+    const div = document.createElement('div');
+    div.className = 'car-block';
+    // cars 2-4 (index 2,3) are emptier for yoyuu
+    let r = Math.random();
+    let cls;
+    if (i >= 2 && i <= 3) {
+      cls = 'car-empty';
+    } else if (crowdPct > 60) {
+      cls = r < 0.5 ? 'car-crowded' : (r < 0.75 ? 'car-medium' : 'car-empty');
+    } else {
+      cls = r < 0.3 ? 'car-crowded' : (r < 0.5 ? 'car-medium' : 'car-empty');
+    }
+    div.className = 'car-block ' + cls;
+    div.textContent = i + 1;
+    div.style.fontSize = '0.55rem';
+    div.style.color = 'rgba(255,255,255,0.5)';
+    grid.appendChild(div);
+  }
+}
+
+function generateFallback(from, to) {
+  // Generic fallback data
+  return {
+    normal: { time:"08:35→09:20", dur:"45分", transfer:"新宿", bufMin:3, crowd:80, seat:18 },
+    yoyuu:  { time:"08:28→09:22", dur:"54分", transfer:"新宿", bufMin:10, crowd:45, seat:65, depart:7 },
+    insight:"このルートでも余裕ルートを選ぶことで乗り換えバッファが3分→10分に拡大します。朝のダッシュとはおさらばできます。"
+  };
+}
+
+// ── Remind Toggle ─────────────────────────────────────────────────────────
+function toggleRemind() {
+  const btn = document.getElementById('remindBtn');
+  if (btn.classList.contains('active')) {
+    btn.textContent = '🔔 セット';
+    btn.classList.remove('active');
+    showToast('リマインダーを解除しました');
+  } else {
+    btn.textContent = '✅ セット済み';
+    btn.classList.add('active');
+    const from = document.getElementById('fromStation').value;
+    const depTime = document.getElementById('depTime').value;
+    showToast('出発 ' + depTime + ' の' + document.getElementById('notifyMinutes').textContent + '分前に通知します');
+  }
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+// Set default time to current time
+window.addEventListener('DOMContentLoaded', () => {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById('depTime').value = hh + ':' + mm;
+  const arr = new Date(now.getTime() + 60 * 60000);
+  const ah = String(arr.getHours()).padStart(2, '0');
+  const am = String(arr.getMinutes()).padStart(2, '0');
+  document.getElementById('arrTime').value = ah + ':' + am;
+});
+</script>
+</body>
+</html>
