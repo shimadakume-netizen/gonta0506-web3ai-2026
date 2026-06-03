@@ -347,26 +347,45 @@ const STATIONS = [
   '北千住','日暮里','田端','駒込','有楽町','神田'
 ];
 
-// ── ROUTES ───────────────────────────────────────────────────
+// ── ROUTES（時刻は動的計算。earlyMins=何分早く出るか、dur=所要分数）──────
 const ROUTES = {
-  "渋谷→新宿":{normal:{time:"08:35→08:51",dur:"16分",transfer:"代々木",bufMin:2,crowd:82,seat:18},yoyuu:{time:"08:32→08:55",dur:"23分",transfer:"代々木",bufMin:9,crowd:44,seat:71},insight:"通常ルートは代々木の乗り換えがギリギリ2分。余裕ルートは9分確保できるのでホームが混んでも安心です。"},
-  "渋谷→池袋":{normal:{time:"08:33→09:02",dur:"29分",transfer:"新宿",bufMin:3,crowd:88,seat:12},yoyuu:{time:"08:28→09:05",dur:"37分",transfer:"新宿",bufMin:12,crowd:52,seat:65},insight:"通常ルートの新宿乗り換え3分は朝ラッシュで最も危険なゾーン。余裕ルートで12分確保すれば心拍数が正常になります。"},
-  "渋谷→東京":{normal:{time:"08:35→09:10",dur:"35分",transfer:"品川",bufMin:2,crowd:91,seat:8},yoyuu:{time:"08:30→09:12",dur:"42分",transfer:"恵比寿",bufMin:10,crowd:38,seat:78},insight:"山手線→東海道線の品川乗り換えは朝のボトルネック最大区間。恵比寿経由余裕ルートで混雑を回避できます。"},
-  "新宿→東京":{normal:{time:"08:32→09:00",dur:"28分",transfer:"秋葉原",bufMin:3,crowd:85,seat:15},yoyuu:{time:"08:27→09:03",dur:"36分",transfer:"秋葉原",bufMin:11,crowd:42,seat:68},insight:"中央線快速は新宿発が超満員。余裕ルートは6分早く出発するだけで座席確保率が4倍以上になります。"},
-  "新宿→池袋":{normal:{time:"08:34→08:44",dur:"10分",transfer:"−",bufMin:0,crowd:78,seat:20},yoyuu:{time:"08:30→08:48",dur:"18分",transfer:"−",bufMin:0,crowd:35,seat:72},insight:"山手線直通。4分早い電車で混雑を大幅に回避。座席確保率が3.6倍に！"},
-  "池袋→東京":{normal:{time:"08:36→09:05",dur:"29分",transfer:"神田",bufMin:2,crowd:89,seat:11},yoyuu:{time:"08:30→09:08",dur:"38分",transfer:"神田",bufMin:9,crowd:50,seat:62},insight:"神田での乗り換えバッファが2分→9分に。2分だと走ることになりますが、9分なら余裕でトイレも行けます。"},
-  "品川→東京":{normal:{time:"08:38→08:52",dur:"14分",transfer:"−",bufMin:0,crowd:87,seat:13},yoyuu:{time:"08:33→08:55",dur:"22分",transfer:"−",bufMin:0,crowd:41,seat:70},insight:"東海道線直通。5分早い電車で座席確保率が5倍以上になります。"},
-  "横浜→新宿":{normal:{time:"08:25→09:10",dur:"45分",transfer:"渋谷",bufMin:3,crowd:90,seat:9},yoyuu:{time:"08:15→09:14",dur:"59分",transfer:"武蔵小杉",bufMin:11,crowd:48,seat:60},insight:"渋谷乗り換え3分は朝の横須賀線→副都心線で最も危険な区間。武蔵小杉経由で11分確保＋混雑回避が最善策。"},
-  "秋葉原→池袋":{normal:{time:"08:40→09:02",dur:"22分",transfer:"上野",bufMin:3,crowd:76,seat:22},yoyuu:{time:"08:35→09:05",dur:"30分",transfer:"上野",bufMin:10,crowd:43,seat:65},insight:"上野での乗り換えは朝のラッシュで3分では厳しい。10分確保でコンビニ寄り道も可能になります。"},
-  "恵比寿→新宿":{normal:{time:"08:38→08:51",dur:"13分",transfer:"−",bufMin:0,crowd:72,seat:22},yoyuu:{time:"08:34→08:55",dur:"21分",transfer:"−",bufMin:0,crowd:35,seat:68},insight:"山手線直通。4分早い電車でガラリと変わります。恵比寿発の余裕ルートは穴場の乗り方です。"},
-  "目黒→東京":{normal:{time:"08:40→09:12",dur:"32分",transfer:"品川",bufMin:3,crowd:80,seat:18},yoyuu:{time:"08:35→09:15",dur:"40分",transfer:"大崎",bufMin:10,crowd:45,seat:65},insight:"大崎乗り換えは品川に比べてホームが広く移動しやすい。余裕ルートで10分確保して人混みを避けましょう。"},
-  "川崎→東京":{normal:{time:"08:20→08:52",dur:"32分",transfer:"−",bufMin:0,crowd:90,seat:10},yoyuu:{time:"08:14→08:55",dur:"41分",transfer:"−",bufMin:0,crowd:48,seat:62},insight:"東海道線直通。6分早い電車で座席確保率が6倍に。川崎始発の優先確保は朝の鉄板テクニックです。"},
-  "武蔵小杉→新宿":{normal:{time:"08:28→09:05",dur:"37分",transfer:"渋谷",bufMin:2,crowd:92,seat:8},yoyuu:{time:"08:20→09:10",dur:"50分",transfer:"二子玉川",bufMin:11,crowd:50,seat:58},insight:"武蔵小杉は混雑の名所。渋谷での乗り換えをなくして大井町線経由にするだけで別路線になります。"},
-  "北千住→東京":{normal:{time:"08:35→09:00",dur:"25分",transfer:"日比谷",bufMin:2,crowd:86,seat:14},yoyuu:{time:"08:30→09:03",dur:"33分",transfer:"日比谷",bufMin:9,crowd:48,seat:60},insight:"日比谷乗り換え2分はラッシュ時に地下鉄で最も混む場所の一つ。9分確保で別世界になります。"},
-  "上野→新宿":{normal:{time:"08:38→09:05",dur:"27分",transfer:"秋葉原",bufMin:3,crowd:78,seat:20},yoyuu:{time:"08:33→09:08",dur:"35分",transfer:"秋葉原",bufMin:10,crowd:42,seat:65},insight:"中央線への乗り換えは秋葉原で3分は少し短め。10分あれば乗車位置を選べて着席率も上がります。"},
-  "有楽町→池袋":{normal:{time:"08:40→09:00",dur:"20分",transfer:"−",bufMin:0,crowd:75,seat:25},yoyuu:{time:"08:36→09:03",dur:"27分",transfer:"−",bufMin:0,crowd:38,seat:70},insight:"有楽町線直通。4分早い電車で混雑度が半分以下に。穴場の時間帯です。"},
-  "神田→渋谷":{normal:{time:"08:42→09:08",dur:"26分",transfer:"新宿",bufMin:3,crowd:83,seat:16},yoyuu:{time:"08:37→09:11",dur:"34分",transfer:"新宿",bufMin:10,crowd:44,seat:66},insight:"新宿乗り換え3分は危険水域。余裕ルートで10分確保すれば、慌てずに乗り換えができます。"}
+  "渋谷→新宿":{earlyMins:3,normalDur:16,yoyuuDur:23,normal:{transfer:"代々木",bufMin:2,crowd:82,seat:18},yoyuu:{transfer:"代々木",bufMin:9,crowd:44,seat:71},insight:"通常ルートは代々木の乗り換えがギリギリ2分。余裕ルートは9分確保できるのでホームが混んでも安心です。"},
+  "渋谷→池袋":{earlyMins:5,normalDur:29,yoyuuDur:37,normal:{transfer:"新宿",bufMin:3,crowd:88,seat:12},yoyuu:{transfer:"新宿",bufMin:12,crowd:52,seat:65},insight:"通常ルートの新宿乗り換え3分は朝ラッシュで最も危険なゾーン。余裕ルートで12分確保すれば心拍数が正常になります。"},
+  "渋谷→東京":{earlyMins:5,normalDur:35,yoyuuDur:42,normal:{transfer:"品川",bufMin:2,crowd:91,seat:8},yoyuu:{transfer:"恵比寿",bufMin:10,crowd:38,seat:78},insight:"山手線→東海道線の品川乗り換えは朝のボトルネック最大区間。恵比寿経由余裕ルートで混雑を回避できます。"},
+  "新宿→東京":{earlyMins:5,normalDur:28,yoyuuDur:36,normal:{transfer:"秋葉原",bufMin:3,crowd:85,seat:15},yoyuu:{transfer:"秋葉原",bufMin:11,crowd:42,seat:68},insight:"中央線快速は新宿発が超満員。余裕ルートは5分早く出発するだけで座席確保率が4倍以上になります。"},
+  "新宿→池袋":{earlyMins:4,normalDur:10,yoyuuDur:18,normal:{transfer:"−",bufMin:0,crowd:78,seat:20},yoyuu:{transfer:"−",bufMin:0,crowd:35,seat:72},insight:"山手線直通。4分早い電車で混雑を大幅に回避。座席確保率が3.6倍に！"},
+  "池袋→東京":{earlyMins:6,normalDur:29,yoyuuDur:38,normal:{transfer:"神田",bufMin:2,crowd:89,seat:11},yoyuu:{transfer:"神田",bufMin:9,crowd:50,seat:62},insight:"神田での乗り換えバッファが2分→9分に。2分だと走ることになりますが、9分なら余裕でトイレも行けます。"},
+  "品川→東京":{earlyMins:5,normalDur:14,yoyuuDur:22,normal:{transfer:"−",bufMin:0,crowd:87,seat:13},yoyuu:{transfer:"−",bufMin:0,crowd:41,seat:70},insight:"東海道線直通。5分早い電車で座席確保率が5倍以上になります。"},
+  "横浜→新宿":{earlyMins:10,normalDur:45,yoyuuDur:59,normal:{transfer:"渋谷",bufMin:3,crowd:90,seat:9},yoyuu:{transfer:"武蔵小杉",bufMin:11,crowd:48,seat:60},insight:"渋谷乗り換え3分は朝の横須賀線→副都心線で最も危険な区間。武蔵小杉経由で11分確保＋混雑回避が最善策。"},
+  "秋葉原→池袋":{earlyMins:5,normalDur:22,yoyuuDur:30,normal:{transfer:"上野",bufMin:3,crowd:76,seat:22},yoyuu:{transfer:"上野",bufMin:10,crowd:43,seat:65},insight:"上野での乗り換えは朝のラッシュで3分では厳しい。10分確保でコンビニ寄り道も可能になります。"},
+  "恵比寿→新宿":{earlyMins:4,normalDur:13,yoyuuDur:21,normal:{transfer:"−",bufMin:0,crowd:72,seat:22},yoyuu:{transfer:"−",bufMin:0,crowd:35,seat:68},insight:"山手線直通。4分早い電車でガラリと変わります。恵比寿発の余裕ルートは穴場の乗り方です。"},
+  "目黒→東京":{earlyMins:5,normalDur:32,yoyuuDur:40,normal:{transfer:"品川",bufMin:3,crowd:80,seat:18},yoyuu:{transfer:"大崎",bufMin:10,crowd:45,seat:65},insight:"大崎乗り換えは品川に比べてホームが広く移動しやすい。余裕ルートで10分確保して人混みを避けましょう。"},
+  "川崎→東京":{earlyMins:6,normalDur:32,yoyuuDur:41,normal:{transfer:"−",bufMin:0,crowd:90,seat:10},yoyuu:{transfer:"−",bufMin:0,crowd:48,seat:62},insight:"東海道線直通。6分早い電車で座席確保率が6倍に。川崎始発の優先確保は朝の鉄板テクニックです。"},
+  "武蔵小杉→新宿":{earlyMins:8,normalDur:37,yoyuuDur:50,normal:{transfer:"渋谷",bufMin:2,crowd:92,seat:8},yoyuu:{transfer:"二子玉川",bufMin:11,crowd:50,seat:58},insight:"武蔵小杉は混雑の名所。渋谷での乗り換えをなくして大井町線経由にするだけで別路線になります。"},
+  "北千住→東京":{earlyMins:5,normalDur:25,yoyuuDur:33,normal:{transfer:"日比谷",bufMin:2,crowd:86,seat:14},yoyuu:{transfer:"日比谷",bufMin:9,crowd:48,seat:60},insight:"日比谷乗り換え2分はラッシュ時に地下鉄で最も混む場所の一つ。9分確保で別世界になります。"},
+  "上野→新宿":{earlyMins:5,normalDur:27,yoyuuDur:35,normal:{transfer:"秋葉原",bufMin:3,crowd:78,seat:20},yoyuu:{transfer:"秋葉原",bufMin:10,crowd:42,seat:65},insight:"中央線への乗り換えは秋葉原で3分は少し短め。10分あれば乗車位置を選べて着席率も上がります。"},
+  "有楽町→池袋":{earlyMins:4,normalDur:20,yoyuuDur:27,normal:{transfer:"−",bufMin:0,crowd:75,seat:25},yoyuu:{transfer:"−",bufMin:0,crowd:38,seat:70},insight:"有楽町線直通。4分早い電車で混雑度が半分以下に。穴場の時間帯です。"},
+  "神田→渋谷":{earlyMins:5,normalDur:26,yoyuuDur:34,normal:{transfer:"新宿",bufMin:3,crowd:83,seat:16},yoyuu:{transfer:"新宿",bufMin:10,crowd:44,seat:66},insight:"新宿乗り換え3分は危険水域。余裕ルートで10分確保すれば、慌てずに乗り換えができます。"}
 };
+
+// ── 時刻を入力値から動的計算 ────────────────────────────────────
+function calcTimes(depStr, normalDur, yoyuuDur, earlyMins) {
+  const [hh,mm] = depStr.split(':').map(Number);
+  const normalDepMin = hh*60+mm;
+  const yoyuuDepMin  = normalDepMin - earlyMins;
+  const fmt = m => {
+    const t = ((m%1440)+1440)%1440;
+    return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
+  };
+  return {
+    normalTime:  fmt(normalDepMin)+'→'+fmt(normalDepMin+normalDur),
+    yoyuuTime:   fmt(yoyuuDepMin) +'→'+fmt(yoyuuDepMin+yoyuuDur),
+    normalDurStr: normalDur+'分',
+    yoyuuDurStr:  yoyuuDur+'分',
+    yoyuuDepStr:  fmt(yoyuuDepMin),
+    earlyMins
+  };
+}
 
 // ── HOURLY CONGESTION (0-23時) ────────────────────────────────
 const HOUR_PROFILE = [3,2,2,2,5,12,50,82,90,65,44,40,44,42,44,52,70,85,78,58,40,28,16,8];
@@ -416,20 +435,23 @@ function renderResults(from,to){
   const key=getKey(from,to);
   const data=key?ROUTES[key]:makeFallback(from,to);
   const dep=document.getElementById('depTime').value;
-  currentRoute={from,to,dep,data};
+
+  // 入力時刻から動的に時刻を計算
+  const times=calcTimes(dep, data.normalDur, data.yoyuuDur, data.earlyMins);
+  currentRoute={from,to,dep,data,yoyuuDep:times.yoyuuDepStr};
 
   document.getElementById('resultsLabel').textContent=from+' → '+to+'  検索結果';
 
   const n=data.normal, y=data.yoyuu;
-  setText('normalTime',n.time);
-  setText('normalDuration',n.dur+' · '+(n.transfer==='−'?'直通':n.transfer+'乗換'));
+  setText('normalTime',times.normalTime);
+  setText('normalDuration',times.normalDurStr+' · '+(n.transfer==='−'?'直通':n.transfer+'乗換'));
   setText('normalTransfer',n.transfer==='−'?'直通（乗換なし）':n.transfer);
   setBuffer('normalBuffer',n.bufMin,n.transfer);
   setText('normalCrowdPct',n.crowd+'%');
   setText('normalSeatPct',n.seat+'%');
 
-  setText('yoyuuTime',y.time);
-  setText('yoyuuDuration',y.dur+' · '+(y.transfer==='−'?'直通':y.transfer+'乗換'));
+  setText('yoyuuTime',times.yoyuuTime);
+  setText('yoyuuDuration',times.yoyuuDurStr+' · '+(y.transfer==='−'?'直通':y.transfer+'乗換')+' （'+times.earlyMins+'分早く出発）');
   setText('yoyuuTransfer',y.transfer==='−'?'直通（乗換なし）':y.transfer);
   setBuffer('yoyuuBuffer',y.bufMin,y.transfer);
   setText('yoyuuCrowdPct',y.crowd+'%');
@@ -463,7 +485,7 @@ function renderResults(from,to){
     animBar('yoyuuSeatBar',y.seat,y.seat>60?'green':'yellow');
   },50);
 
-  startCountdown(dep);
+  startCountdown(times.yoyuuDepStr);  // 余裕ルートの出発時刻にカウント
   renderChart(dep);
 }
 
@@ -493,8 +515,9 @@ function renderCarGrid(crowd){
 }
 function makeFallback(from,to){
   return{
-    normal:{time:"08:35→09:20",dur:"45分",transfer:"新宿",bufMin:3,crowd:80,seat:18},
-    yoyuu:{time:"08:28→09:22",dur:"54分",transfer:"新宿",bufMin:10,crowd:45,seat:65},
+    earlyMins:7, normalDur:45, yoyuuDur:54,
+    normal:{transfer:"新宿",bufMin:3,crowd:80,seat:18},
+    yoyuu: {transfer:"新宿",bufMin:10,crowd:45,seat:65},
     insight:from+'→'+to+'ルートでも余裕ルートで乗り換えバッファが3分→10分に拡大。朝のダッシュとはおさらばできます。'
   };
 }
