@@ -493,17 +493,26 @@ function countdown(depStr){
     const [hh,mm]=depStr.split(':').map(Number);
     const now=new Date(),dep=new Date();
     dep.setHours(hh,mm,0,0);
-    if(dep<now)dep.setDate(dep.getDate()+1);
+    // 翌日繰り上げしない — 入力した時刻をそのまま基準にする
     const diff=dep-now,total=~~(diff/1000);
-    const mins=~~(total/60),secs=total%60;
-    set('cdM',String(mins).padStart(2,'0'));
-    set('cdS',String(secs).padStart(2,'0'));
-    set('cdSub','出発時刻 '+depStr+' まで残り');
+    const absMins=Math.abs(~~(total/60));
+    const absSecs=Math.abs(total%60);
     const card=document.getElementById('cdCard'),st=document.getElementById('cdSt');
-    if(mins<0){card.className='cd r';st.textContent='出発時刻を過ぎました';}
-    else if(mins<5){card.className='cd r';st.textContent='⚠️ 急いでください！';}
-    else if(mins<10){card.className='cd y';st.textContent='そろそろ準備を';}
-    else{card.className='cd g';st.textContent='余裕あり ✓';}
+    if(total<=0){
+      // 出発時刻が過ぎている場合
+      set('cdM',String(absMins).padStart(2,'0'));
+      set('cdS',String(absSecs).padStart(2,'0'));
+      set('cdSub','出発時刻 '+depStr+' から経過');
+      card.className='cd r';st.textContent='出発時刻を過ぎました';
+    } else {
+      const mins=~~(total/60),secs=total%60;
+      set('cdM',String(mins).padStart(2,'0'));
+      set('cdS',String(secs).padStart(2,'0'));
+      set('cdSub','出発時刻 '+depStr+' まで残り');
+      if(mins<5){card.className='cd r';st.textContent='⚠️ 急いでください！';}
+      else if(mins<10){card.className='cd y';st.textContent='そろそろ準備を';}
+      else{card.className='cd g';st.textContent='余裕あり ✓';}
+    }
   }
   tick2();tick=setInterval(tick2,1000);
 }
