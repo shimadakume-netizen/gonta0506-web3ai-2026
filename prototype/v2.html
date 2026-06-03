@@ -3,185 +3,183 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>余裕乗り換えナビ — v2</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>余裕乗り換えナビ v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --bg:#0f0f1a;--surface:#16182a;--surface2:#1e2035;
-  --indigo:#6366f1;--indigo-light:#818cf8;
+  --indigo:#6366f1;--il:#818cf8;
   --green:#22c55e;--yellow:#facc15;--orange:#f97316;--red:#ef4444;
   --text:#e2e8f0;--muted:#94a3b8;--border:rgba(99,102,241,0.2);
 }
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;min-height:100vh;padding-bottom:4rem;}
 
-header{background:linear-gradient(135deg,#0f0f1a,#1a1a2e);border-bottom:1px solid var(--border);padding:1.25rem 1rem 1rem;text-align:center;position:relative;overflow:hidden;}
+/* HEADER */
+header{background:linear-gradient(135deg,#0f0f1a,#1a1a2e);border-bottom:1px solid var(--border);padding:1.2rem 1rem 1rem;text-align:center;position:relative;overflow:hidden;}
 header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 0%,rgba(99,102,241,0.15),transparent 70%);pointer-events:none;}
 .logo{font-size:1.6rem;font-weight:900;letter-spacing:-0.02em;}
-.logo span{color:var(--indigo-light);}
+.logo span{color:var(--il);}
 .tagline{font-size:0.78rem;color:var(--muted);margin-top:0.2rem;}
-.header-badges{display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-top:0.6rem;flex-wrap:wrap;}
-.v2-badge{background:var(--indigo);color:#fff;font-size:0.65rem;font-weight:900;padding:0.2rem 0.65rem;border-radius:99px;letter-spacing:0.1em;}
-.beta-badge{background:rgba(99,102,241,0.2);border:1px solid var(--indigo);border-radius:99px;font-size:0.65rem;color:var(--indigo-light);padding:0.15rem 0.6rem;}
+.badges{display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-top:0.5rem;}
+.v2b{background:var(--indigo);color:#fff;font-size:0.65rem;font-weight:900;padding:0.2rem 0.65rem;border-radius:99px;letter-spacing:0.1em;}
+.ptb{background:rgba(99,102,241,0.2);border:1px solid var(--indigo);border-radius:99px;font-size:0.65rem;color:var(--il);padding:0.15rem 0.6rem;}
 
-/* SAVED ROUTES */
-.saved-section{max-width:640px;margin:1rem auto 0;padding:0 1rem;display:none;}
-.saved-section.show{display:block;}
-.saved-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;}
-.saved-title{font-size:0.72rem;font-weight:700;color:var(--indigo-light);letter-spacing:0.1em;text-transform:uppercase;display:flex;align-items:center;gap:0.4rem;}
-.saved-clear{font-size:0.68rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;}
-.saved-clear:hover{color:var(--red);}
-.saved-cards{display:flex;gap:0.5rem;overflow-x:auto;scrollbar-width:none;padding-bottom:0.25rem;}
-.saved-cards::-webkit-scrollbar{display:none;}
-.saved-card{flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0.65rem 0.9rem;cursor:pointer;transition:all 0.2s;min-width:130px;}
-.saved-card:hover{border-color:var(--indigo);transform:translateY(-1px);}
-.saved-card-star{font-size:0.7rem;color:var(--yellow);margin-bottom:0.15rem;}
-.saved-card-route{font-size:0.82rem;font-weight:700;color:#fff;margin-bottom:0.2rem;}
-.saved-card-time{font-size:0.68rem;color:var(--muted);}
+/* SAVED */
+.saved-sec{max-width:640px;margin:1rem auto 0;padding:0 1rem;display:none;}
+.saved-sec.on{display:block;}
+.saved-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;}
+.saved-title{font-size:0.72rem;font-weight:700;color:var(--il);letter-spacing:0.1em;text-transform:uppercase;}
+.saved-clr{font-size:0.68rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;}
+.saved-clr:hover{color:var(--red);}
+.saved-list{display:flex;gap:0.5rem;overflow-x:auto;scrollbar-width:none;padding-bottom:0.25rem;}
+.saved-list::-webkit-scrollbar{display:none;}
+.scard{flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0.65rem 0.9rem;cursor:pointer;transition:all 0.2s;min-width:130px;}
+.scard:hover{border-color:var(--indigo);transform:translateY(-1px);}
+.scard-star{font-size:0.68rem;color:var(--yellow);margin-bottom:0.15rem;}
+.scard-route{font-size:0.82rem;font-weight:700;color:#fff;margin-bottom:0.2rem;}
+.scard-time{font-size:0.68rem;color:var(--muted);}
 
+/* MAIN */
 main{max-width:640px;margin:0 auto;padding:0 1rem;}
 
 /* DIFF BANNER */
-.diff-banner{background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.25);border-radius:12px;padding:0.75rem 1rem;margin:1rem 0 0;font-size:0.75rem;color:rgba(255,255,255,0.6);display:flex;align-items:flex-start;gap:0.5rem;}
-.diff-banner strong{color:var(--indigo-light);}
+.diff{background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.25);border-radius:12px;padding:0.75rem 1rem;margin:1rem 0 0;font-size:0.75rem;color:rgba(255,255,255,0.6);display:flex;gap:0.5rem;}
+.diff strong{color:var(--il);}
 
-/* SEARCH CARD */
-.search-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem 1.25rem 1.25rem;margin-top:1.25rem;}
-.search-title{font-size:0.8rem;font-weight:700;color:var(--indigo-light);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1rem;}
-.station-row{display:grid;grid-template-columns:1fr auto 1fr;gap:0.5rem;align-items:center;margin-bottom:1rem;}
-.arrow-icon{font-size:1.2rem;text-align:center;color:var(--indigo-light);cursor:pointer;transition:transform 0.3s;user-select:none;}
-.arrow-icon:hover{transform:scale(1.2);}
-select,input[type="time"]{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:0.9rem;padding:0.65rem 0.75rem;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
-select:focus,input[type="time"]:focus{border-color:var(--indigo);}
+/* SEARCH */
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem 1.25rem 1.25rem;margin-top:1.25rem;}
+.sc-title{font-size:0.8rem;font-weight:700;color:var(--il);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1rem;}
+.st-row{display:grid;grid-template-columns:1fr auto 1fr;gap:0.5rem;align-items:center;margin-bottom:1rem;}
+.swap{font-size:1.2rem;text-align:center;color:var(--il);cursor:pointer;transition:transform 0.3s;user-select:none;}
+.swap:hover{transform:scale(1.2);}
+select,input[type=time]{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:0.9rem;padding:0.65rem 0.75rem;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+select:focus,input[type=time]:focus{border-color:var(--indigo);}
 .time-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.25rem;}
-.field-label{font-size:0.7rem;color:var(--muted);margin-bottom:0.3rem;letter-spacing:0.05em;}
-.search-btn{width:100%;background:var(--indigo);color:#fff;border:none;border-radius:12px;font-family:'Noto Sans JP',sans-serif;font-size:1rem;font-weight:700;padding:0.85rem;cursor:pointer;transition:all 0.2s;}
-.search-btn:hover{background:var(--indigo-light);transform:translateY(-1px);}
+.fl{font-size:0.7rem;color:var(--muted);margin-bottom:0.3rem;letter-spacing:0.05em;}
+.sbtn{width:100%;background:var(--indigo);color:#fff;border:none;border-radius:12px;font-family:'Noto Sans JP',sans-serif;font-size:1rem;font-weight:700;padding:0.85rem;cursor:pointer;transition:all 0.2s;}
+.sbtn:hover{background:var(--il);transform:translateY(-1px);}
 
 /* LOADING */
-.loading{display:none;text-align:center;padding:2rem;color:var(--muted);font-size:0.9rem;}
-.loading.show{display:block;}
-.dot-spin{display:inline-block;width:36px;height:36px;border:3px solid rgba(99,102,241,0.2);border-top-color:var(--indigo);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:0.75rem;}
+.ld{display:none;text-align:center;padding:2rem;color:var(--muted);}
+.ld.on{display:block;}
+.spin{display:inline-block;width:36px;height:36px;border:3px solid rgba(99,102,241,0.2);border-top-color:var(--indigo);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:.75rem;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* RESULTS */
-#results{margin-top:1.5rem;display:none;}
-#results.show{display:block;}
-.results-label{font-size:0.75rem;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;padding:0 0.25rem;}
+#res{margin-top:1.5rem;display:none;}
+#res.on{display:block;}
+.rl{font-size:0.75rem;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;}
 
 /* ROUTE CARDS */
-.route-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;}
-@media(max-width:420px){.route-grid{grid-template-columns:1fr;}}
-.route-card{background:var(--surface);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;position:relative;overflow:hidden;}
-.route-card.recommended{border-color:rgba(34,197,94,0.4);background:linear-gradient(135deg,rgba(34,197,94,0.05),var(--surface));}
-.route-card.normal{border-color:rgba(239,68,68,0.3);}
-.rec-badge{position:absolute;top:0.6rem;right:0.6rem;background:var(--green);color:#fff;font-size:0.6rem;font-weight:700;padding:0.15rem 0.45rem;border-radius:99px;}
-.card-type{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;}
-.card-type.n{color:#ef8080;}.card-type.r{color:var(--green);}
-.time-display{font-size:1.5rem;font-weight:900;letter-spacing:-0.02em;line-height:1;margin-bottom:0.15rem;}
-.time-display.n{color:#ef8080;}.time-display.r{color:var(--green);}
-.duration-tag{font-size:0.72rem;color:var(--muted);margin-bottom:0.9rem;}
-.section-label{font-size:0.6rem;color:var(--muted);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;margin-top:0.6rem;}
-.transfer-row{display:flex;align-items:center;gap:0.35rem;font-size:0.78rem;margin-bottom:0.7rem;}
-.buffer-badge{font-size:0.7rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:6px;}
-.buf-red{background:rgba(239,68,68,0.2);color:#ef8080;border:1px solid rgba(239,68,68,0.3);}
-.buf-yellow{background:rgba(250,204,21,0.15);color:var(--yellow);border:1px solid rgba(250,204,21,0.3);}
-.buf-green{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
-.meter-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;margin-bottom:0.8rem;}
-.meter-fill{height:100%;border-radius:99px;transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1);width:0%;}
-.meter-fill.red{background:linear-gradient(90deg,#ef4444,#f87171);}
-.meter-fill.yellow{background:linear-gradient(90deg,#d97706,#facc15);}
-.meter-fill.green{background:linear-gradient(90deg,#16a34a,#22c55e);}
-.meter-label-row{display:flex;justify-content:space-between;font-size:0.62rem;color:var(--muted);margin-bottom:0.2rem;}
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;}
+@media(max-width:420px){.rg{grid-template-columns:1fr;}}
+.rc{background:var(--surface);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;position:relative;overflow:hidden;}
+.rc.rec{border-color:rgba(34,197,94,0.4);background:linear-gradient(135deg,rgba(34,197,94,0.05),var(--surface));}
+.rc.nrm{border-color:rgba(239,68,68,0.3);}
+.rbadge{position:absolute;top:0.6rem;right:0.6rem;background:var(--green);color:#fff;font-size:0.6rem;font-weight:700;padding:0.15rem 0.45rem;border-radius:99px;}
+.ct{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;}
+.ct.n{color:#ef8080;}.ct.r{color:var(--green);}
+.td{font-size:1.5rem;font-weight:900;letter-spacing:-0.02em;line-height:1;margin-bottom:0.15rem;}
+.td.n{color:#ef8080;}.td.r{color:var(--green);}
+.dd{font-size:0.72rem;color:var(--muted);margin-bottom:0.9rem;}
+.sl{font-size:0.6rem;color:var(--muted);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;margin-top:0.6rem;}
+.trow{display:flex;align-items:center;gap:0.35rem;font-size:0.78rem;margin-bottom:0.7rem;}
+.bb{font-size:0.7rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:6px;}
+.br{background:rgba(239,68,68,0.2);color:#ef8080;border:1px solid rgba(239,68,68,0.3);}
+.by{background:rgba(250,204,21,0.15);color:var(--yellow);border:1px solid rgba(250,204,21,0.3);}
+.bg{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+.mb{height:6px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;margin-bottom:0.8rem;}
+.mf{height:100%;border-radius:99px;transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1);width:0%;}
+.mf.red{background:linear-gradient(90deg,#ef4444,#f87171);}
+.mf.yel{background:linear-gradient(90deg,#d97706,#facc15);}
+.mf.grn{background:linear-gradient(90deg,#16a34a,#22c55e);}
+.mlr{display:flex;justify-content:space-between;font-size:0.62rem;color:var(--muted);margin-bottom:0.2rem;}
 
-/* NEW FEATURE LABEL */
-.new-wrap{margin-bottom:0.75rem;}
-.new-label{display:inline-flex;align-items:center;gap:0.3rem;background:var(--indigo);color:#fff;font-size:0.58rem;font-weight:900;padding:0.1rem 0.45rem;border-radius:99px;letter-spacing:0.08em;margin-bottom:0.4rem;}
-
-/* COUNTDOWN */
-.countdown-card{border-radius:14px;padding:1.1rem 1.25rem;text-align:center;transition:background 0.5s,border-color 0.5s;}
-.countdown-card.green{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.4);}
-.countdown-card.yellow{background:rgba(250,204,21,0.08);border:1px solid rgba(250,204,21,0.4);}
-.countdown-card.red{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.5);}
-.cd-title{font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;margin-bottom:0.5rem;}
-.cd-display{display:flex;align-items:baseline;justify-content:center;gap:0.2rem;margin-bottom:0.3rem;}
-.cd-num{font-size:3rem;font-weight:900;line-height:1;letter-spacing:-0.03em;}
-.countdown-card.green .cd-num{color:var(--green);}
-.countdown-card.yellow .cd-num{color:var(--yellow);}
-.countdown-card.red .cd-num{color:var(--red);}
-.cd-unit{font-size:0.85rem;color:var(--muted);font-weight:700;}
-.cd-colon{font-size:2.2rem;font-weight:900;color:var(--muted);margin:0 0.1rem;animation:blinkc 1s step-end infinite;}
-@keyframes blinkc{50%{opacity:0;}}
-.cd-sub{font-size:0.72rem;color:var(--muted);}
-.cd-status{display:inline-block;font-size:0.75rem;font-weight:700;padding:0.2rem 0.75rem;border-radius:99px;margin-top:0.5rem;}
-.countdown-card.green .cd-status{background:rgba(34,197,94,0.15);color:var(--green);}
-.countdown-card.yellow .cd-status{background:rgba(250,204,21,0.15);color:var(--yellow);}
-.countdown-card.red .cd-status{background:rgba(239,68,68,0.15);color:var(--red);}
-
-/* CONGESTION CHART */
-.cong-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem 0.75rem;}
-.cong-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;}
-.cong-title{font-size:0.72rem;font-weight:700;color:var(--indigo-light);letter-spacing:0.08em;}
-.cong-legend{display:flex;align-items:center;gap:0.75rem;}
-.leg-item{display:flex;align-items:center;gap:0.25rem;font-size:0.58rem;color:var(--muted);}
-.leg-dot{width:6px;height:6px;border-radius:50%;}
-.chart-wrap{position:relative;}
-.chart-bars{display:flex;align-items:flex-end;gap:1px;height:64px;margin-bottom:4px;}
-.cbar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative;cursor:pointer;}
-.cbar-fill{width:calc(100% - 1px);border-radius:2px 2px 0 0;transition:height 0.7s ease;min-height:2px;}
-.cbar:hover .cbar-fill{opacity:0.7;}
-.cbar.now .cbar-fill{outline:2px solid var(--indigo);outline-offset:1px;}
-.cbar.dep .cbar-fill{outline:2px solid var(--yellow);outline-offset:1px;}
-.cbar-tip{position:absolute;top:-26px;left:50%;transform:translateX(-50%);background:#1e2035;border:1px solid var(--border);border-radius:5px;padding:0.15rem 0.35rem;font-size:0.58rem;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.15s;z-index:10;color:#fff;}
-.cbar:hover .cbar-tip{opacity:1;}
-.chart-xlabels{display:flex;align-items:center;gap:1px;}
-.chart-xlabel{flex:1;font-size:0.46rem;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;}
-.dep-tag{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:0.46rem;color:var(--yellow);font-weight:700;white-space:nowrap;}
-.cong-hint{margin-top:0.75rem;font-size:0.62rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:0.75rem;}
-.cong-hint span{display:flex;align-items:center;gap:0.25rem;}
+/* NEW LABEL */
+.nw{margin-bottom:0.75rem;}
+.nl{display:inline-flex;align-items:center;background:var(--indigo);color:#fff;font-size:0.58rem;font-weight:900;padding:0.1rem 0.45rem;border-radius:99px;letter-spacing:0.08em;margin-bottom:0.4rem;}
 
 /* INSIGHT */
-.insight-card{background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(99,102,241,0.05));border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:1rem 1.1rem;margin-bottom:0.75rem;display:flex;align-items:flex-start;gap:0.75rem;}
-.insight-icon{font-size:1.5rem;flex-shrink:0;}
-.insight-text{font-size:0.82rem;line-height:1.6;color:var(--text);}
-.insight-text strong{color:var(--indigo-light);}
+.ins{background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(99,102,241,0.05));border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:1rem 1.1rem;margin-bottom:0.75rem;display:flex;align-items:flex-start;gap:0.75rem;}
+.ins-ico{font-size:1.5rem;flex-shrink:0;}
+.ins-txt{font-size:0.82rem;line-height:1.6;}
+.ins-txt strong{color:var(--il);}
+
+/* COUNTDOWN */
+.cd{border-radius:14px;padding:1.1rem 1.25rem;text-align:center;transition:background 0.5s,border-color 0.5s;}
+.cd.g{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.4);}
+.cd.y{background:rgba(250,204,21,0.08);border:1px solid rgba(250,204,21,0.4);}
+.cd.r{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.5);}
+.cd-title{font-size:0.72rem;font-weight:700;color:var(--muted);margin-bottom:0.5rem;}
+.cd-disp{display:flex;align-items:baseline;justify-content:center;gap:0.2rem;margin-bottom:0.3rem;}
+.cdn{font-size:3rem;font-weight:900;line-height:1;letter-spacing:-0.03em;}
+.cd.g .cdn{color:var(--green);}.cd.y .cdn{color:var(--yellow);}.cd.r .cdn{color:var(--red);}
+.cdu{font-size:0.85rem;color:var(--muted);font-weight:700;}
+.cdc{font-size:2.2rem;font-weight:900;color:var(--muted);margin:0 0.1rem;animation:bc 1s step-end infinite;}
+@keyframes bc{50%{opacity:0;}}
+.cd-sub{font-size:0.72rem;color:var(--muted);}
+.cd-st{display:inline-block;font-size:0.75rem;font-weight:700;padding:0.2rem 0.75rem;border-radius:99px;margin-top:0.5rem;}
+.cd.g .cd-st{background:rgba(34,197,94,0.15);color:var(--green);}
+.cd.y .cd-st{background:rgba(250,204,21,0.15);color:var(--yellow);}
+.cd.r .cd-st{background:rgba(239,68,68,0.15);color:var(--red);}
+
+/* CHART */
+.cc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem 0.75rem;}
+.cc-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;}
+.cc-title{font-size:0.72rem;font-weight:700;color:var(--il);}
+.leg{display:flex;align-items:center;gap:0.75rem;}
+.li{display:flex;align-items:center;gap:0.25rem;font-size:0.58rem;color:var(--muted);}
+.ld2{width:6px;height:6px;border-radius:50%;}
+.bars{display:flex;align-items:flex-end;gap:1px;height:64px;margin-bottom:4px;}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative;cursor:pointer;}
+.barf{width:calc(100% - 1px);border-radius:2px 2px 0 0;transition:height 0.7s ease;min-height:2px;}
+.bar:hover .barf{opacity:0.7;}
+.bar.now .barf{outline:2px solid var(--indigo);outline-offset:1px;}
+.bar.dep .barf{outline:2px solid var(--yellow);outline-offset:1px;}
+.btt{position:absolute;top:-26px;left:50%;transform:translateX(-50%);background:#1e2035;border:1px solid var(--border);border-radius:5px;padding:0.15rem 0.35rem;font-size:0.58rem;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.15s;z-index:10;color:#fff;}
+.bar:hover .btt{opacity:1;}
+.bar.dep .dep-tag{display:block;}
+.dep-tag{display:none;position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:0.46rem;color:var(--yellow);font-weight:700;white-space:nowrap;}
+.xlabs{display:flex;gap:1px;}
+.xlab{flex:1;font-size:0.46rem;color:var(--muted);text-align:center;overflow:hidden;}
+.ch{margin-top:0.75rem;font-size:0.62rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:0.75rem;}
+.ch span{display:flex;align-items:center;gap:0.25rem;}
+.dot{width:8px;height:8px;border-radius:1px;}
 
 /* SEAT */
-.seat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;margin-bottom:0.75rem;}
-.seat-title{font-size:0.72rem;font-weight:700;color:var(--indigo-light);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.75rem;}
-.car-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-bottom:0.4rem;}
-.car-block{aspect-ratio:1;border-radius:3px;font-size:0.5rem;display:flex;align-items:center;justify-content:center;}
-.car-empty{background:rgba(34,197,94,0.25);}
-.car-crowded{background:rgba(239,68,68,0.3);}
-.car-medium{background:rgba(250,204,21,0.2);}
-.car-hint{font-size:0.62rem;color:var(--muted);}
+.seat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;margin-bottom:0.75rem;}
+.seat-t{font-size:0.72rem;font-weight:700;color:var(--il);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.75rem;}
+.cg{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-bottom:0.4rem;}
+.cb{aspect-ratio:1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:rgba(255,255,255,0.5);}
+.ce{background:rgba(34,197,94,0.25);}.cm{background:rgba(250,204,21,0.2);}.cw{background:rgba(239,68,68,0.3);}
+.ch2{font-size:0.62rem;color:var(--muted);}
 
 /* SAVE */
-.save-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:0.9rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;}
-.save-text{font-size:0.8rem;color:var(--muted);}
-.save-text strong{color:var(--text);display:block;margin-bottom:0.1rem;}
-.save-btn{background:rgba(250,204,21,0.15);color:var(--yellow);border:1px solid rgba(250,204,21,0.35);border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:0.75rem;font-weight:700;padding:0.5rem 0.9rem;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;}
-.save-btn:hover{background:rgba(250,204,21,0.25);}
-.save-btn.saved{background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.35);}
+.sv{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:0.9rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;}
+.sv-t{font-size:0.8rem;color:var(--muted);}
+.sv-t strong{color:var(--text);display:block;margin-bottom:0.1rem;}
+.svbtn{background:rgba(250,204,21,0.15);color:var(--yellow);border:1px solid rgba(250,204,21,0.35);border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:0.75rem;font-weight:700;padding:0.5rem 0.9rem;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;}
+.svbtn:hover{background:rgba(250,204,21,0.25);}
+.svbtn.saved{background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.35);}
 
 /* NOTIFY */
-.notify-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;margin-bottom:0.75rem;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;}
-.notify-text{font-size:0.8rem;line-height:1.5;color:var(--muted);}
-.notify-text strong{color:var(--text);}
-.remind-btn{background:var(--indigo);color:#fff;border:none;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:0.75rem;font-weight:700;padding:0.55rem 0.9rem;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;}
-.remind-btn.active{background:#16a34a;}
-.remind-btn:hover{filter:brightness(1.15);}
+.nc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;margin-bottom:0.75rem;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;}
+.nt{font-size:0.8rem;line-height:1.5;color:var(--muted);}
+.nt strong{color:var(--text);}
+.rbtn{background:var(--indigo);color:#fff;border:none;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:0.75rem;font-weight:700;padding:0.55rem 0.9rem;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;}
+.rbtn.active{background:#16a34a;}
 
 /* TOAST */
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(6px);background:#1e2035;border:1px solid var(--green);border-radius:10px;padding:0.6rem 1.2rem;font-size:0.82rem;color:var(--green);font-weight:700;opacity:0;pointer-events:none;transition:all 0.3s;white-space:nowrap;z-index:999;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.toast.warn{border-color:var(--yellow);color:var(--yellow);}
-.toast.err{border-color:var(--red);color:var(--red);}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.w{border-color:var(--yellow);color:var(--yellow);}
+.toast.e{border-color:var(--red);color:var(--red);}
 
 /* EMPTY */
-.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted);font-size:0.85rem;}
-.empty-icon{font-size:2.5rem;margin-bottom:0.75rem;display:block;}
+.empty{text-align:center;padding:3rem 1rem;color:var(--muted);}
+.empty span{font-size:2.5rem;display:block;margin-bottom:.75rem;}
 </style>
 </head>
 <body>
@@ -189,455 +187,392 @@ select:focus,input[type="time"]:focus{border-color:var(--indigo);}
 <header>
   <div class="logo">🚃 余裕<span>乗り換えナビ</span></div>
   <div class="tagline">ギリギリ乗り換えを、もうやめよう。</div>
-  <div class="header-badges">
-    <span class="v2-badge">✦ v2</span>
-    <span class="beta-badge">PROTOTYPE</span>
+  <div class="badges">
+    <span class="v2b">✦ v2</span>
+    <span class="ptb">PROTOTYPE</span>
   </div>
 </header>
 
-<!-- SAVED ROUTES -->
-<div class="saved-section" id="savedSection">
-  <div class="saved-header">
+<!-- SAVED -->
+<div class="saved-sec" id="savedSec">
+  <div class="saved-hd">
     <div class="saved-title">⭐ よく使うルート</div>
-    <button class="saved-clear" onclick="clearAllSaved()">クリア</button>
+    <button class="saved-clr" onclick="clearSaved()">クリア</button>
   </div>
-  <div class="saved-cards" id="savedCards"></div>
+  <div class="saved-list" id="savedList"></div>
 </div>
 
 <main>
+  <div class="diff"><span>🆕</span><div><strong>v2 追加:</strong> 時刻を入力値から動的計算 / カウントダウン / 混雑グラフ / ルート保存 / 対応20駅</div></div>
 
-  <div class="diff-banner">
-    <span>🆕</span>
-    <div><strong>v2 追加機能:</strong> 出発カウントダウン / 時間帯別混雑予報グラフ / よく使うルート保存（最大3件）/ 対応駅 8 → 20駅</div>
-  </div>
-
-  <!-- Search -->
-  <div class="search-card">
-    <div class="search-title">🔍 ルート検索</div>
-    <div class="station-row">
-      <div><div class="field-label">出発駅</div><select id="fromStation"></select></div>
-      <div class="arrow-icon" onclick="swapStations()" title="入れ替え">⇄</div>
-      <div><div class="field-label">到着駅</div><select id="toStation"></select></div>
+  <!-- SEARCH -->
+  <div class="sc">
+    <div class="sc-title">🔍 ルート検索</div>
+    <div class="st-row">
+      <div><div class="fl">出発駅</div><select id="from"></select></div>
+      <div class="swap" onclick="swap()">⇄</div>
+      <div><div class="fl">到着駅</div><select id="to"></select></div>
     </div>
     <div class="time-row">
-      <div><div class="field-label">出発時刻</div><input type="time" id="depTime"></div>
-      <div><div class="field-label">希望到着</div><input type="time" id="arrTime"></div>
+      <div><div class="fl">出発時刻</div><input type="time" id="dep"></div>
+      <div><div class="fl">希望到着</div><input type="time" id="arr"></div>
     </div>
-    <button class="search-btn" onclick="doSearch()">余裕ルートを探す →</button>
+    <button class="sbtn" onclick="search()">余裕ルートを探す →</button>
   </div>
 
-  <div class="loading" id="loading"><div class="dot-spin"></div><br>AIがルートを解析中...</div>
+  <div class="ld" id="ld"><div class="spin"></div><br>AIがルートを解析中...</div>
 
-  <div id="results">
-    <div class="results-label" id="resultsLabel"></div>
+  <div id="res">
+    <div class="rl" id="rl"></div>
 
-    <!-- Route comparison -->
-    <div class="route-grid">
-      <div class="route-card normal">
-        <div class="card-type n">通常ルート</div>
-        <div class="time-display n" id="normalTime">−</div>
-        <div class="duration-tag" id="normalDuration">−</div>
-        <div class="section-label">乗り換えバッファ</div>
-        <div class="transfer-row"><span id="normalTransfer">−</span><span class="buffer-badge buf-red" id="normalBuffer">−</span></div>
-        <div class="section-label">混雑度</div>
-        <div class="meter-label-row"><span>空き</span><span id="normalCrowdPct">−</span></div>
-        <div class="meter-bar"><div class="meter-fill red" id="normalCrowdBar"></div></div>
-        <div class="section-label">座席確保率</div>
-        <div class="meter-label-row"><span>低</span><span id="normalSeatPct">−</span></div>
-        <div class="meter-bar"><div class="meter-fill red" id="normalSeatBar"></div></div>
+    <!-- ROUTE CARDS -->
+    <div class="rg">
+      <div class="rc nrm">
+        <div class="ct n">通常ルート</div>
+        <div class="td n" id="nTime">−</div>
+        <div class="dd" id="nDur">−</div>
+        <div class="sl">乗り換えバッファ</div>
+        <div class="trow"><span id="nTr">−</span><span class="bb br" id="nBuf">−</span></div>
+        <div class="sl">混雑度</div>
+        <div class="mlr"><span>空き</span><span id="nCPct">−</span></div>
+        <div class="mb"><div class="mf red" id="nCBar"></div></div>
+        <div class="sl">座席確保率</div>
+        <div class="mlr"><span>低</span><span id="nSPct">−</span></div>
+        <div class="mb"><div class="mf red" id="nSBar"></div></div>
       </div>
-      <div class="route-card recommended">
-        <div class="rec-badge">おすすめ</div>
-        <div class="card-type r">余裕ルート</div>
-        <div class="time-display r" id="yoyuuTime">−</div>
-        <div class="duration-tag" id="yoyuuDuration">−</div>
-        <div class="section-label">乗り換えバッファ</div>
-        <div class="transfer-row"><span id="yoyuuTransfer">−</span><span class="buffer-badge buf-green" id="yoyuuBuffer">−</span></div>
-        <div class="section-label">混雑度</div>
-        <div class="meter-label-row"><span>空き</span><span id="yoyuuCrowdPct">−</span></div>
-        <div class="meter-bar"><div class="meter-fill green" id="yoyuuCrowdBar"></div></div>
-        <div class="section-label">座席確保率</div>
-        <div class="meter-label-row"><span>低</span><span id="yoyuuSeatPct">−</span></div>
-        <div class="meter-bar"><div class="meter-fill green" id="yoyuuSeatBar"></div></div>
+      <div class="rc rec">
+        <div class="rbadge">おすすめ</div>
+        <div class="ct r">余裕ルート</div>
+        <div class="td r" id="yTime">−</div>
+        <div class="dd" id="yDur">−</div>
+        <div class="sl">乗り換えバッファ</div>
+        <div class="trow"><span id="yTr">−</span><span class="bb bg" id="yBuf">−</span></div>
+        <div class="sl">混雑度</div>
+        <div class="mlr"><span>空き</span><span id="yCPct">−</span></div>
+        <div class="mb"><div class="mf grn" id="yCBar"></div></div>
+        <div class="sl">座席確保率</div>
+        <div class="mlr"><span>低</span><span id="ySPct">−</span></div>
+        <div class="mb"><div class="mf grn" id="ySBar"></div></div>
       </div>
     </div>
 
-    <div class="insight-card">
-      <div class="insight-icon">💡</div>
-      <div class="insight-text" id="insightText"></div>
-    </div>
+    <div class="ins"><div class="ins-ico">💡</div><div class="ins-txt" id="ins"></div></div>
 
-    <!-- ★ NEW: Countdown -->
-    <div class="new-wrap">
-      <span class="new-label">✦ v2 NEW — 出発カウントダウン</span>
-      <div class="countdown-card green" id="countdownCard">
+    <!-- COUNTDOWN -->
+    <div class="nw">
+      <span class="nl">✦ v2 NEW — 出発カウントダウン</span>
+      <div class="cd g" id="cdCard">
         <div class="cd-title">余裕ルートの出発まで</div>
-        <div class="cd-display">
-          <span class="cd-num" id="cdMins">--</span><span class="cd-unit">分</span>
-          <span class="cd-colon">:</span>
-          <span class="cd-num" id="cdSecs">--</span><span class="cd-unit">秒</span>
+        <div class="cd-disp">
+          <span class="cdn" id="cdM">--</span><span class="cdu">分</span>
+          <span class="cdc">:</span>
+          <span class="cdn" id="cdS">--</span><span class="cdu">秒</span>
         </div>
         <div class="cd-sub" id="cdSub">出発時刻まで残り</div>
-        <div class="cd-status" id="cdStatus">余裕あり</div>
+        <div class="cd-st" id="cdSt">余裕あり</div>
       </div>
     </div>
 
-    <!-- ★ NEW: Congestion Chart -->
-    <div class="new-wrap">
-      <span class="new-label">✦ v2 NEW — 時間帯別混雑予報</span>
-      <div class="cong-card">
-        <div class="cong-header">
-          <div class="cong-title">📊 1日の混雑推移（路線別予報）</div>
-          <div class="cong-legend">
-            <div class="leg-item"><div class="leg-dot" style="background:var(--indigo);border:1px solid #fff;"></div>現在</div>
-            <div class="leg-item"><div class="leg-dot" style="background:var(--yellow);"></div>出発</div>
+    <!-- CHART -->
+    <div class="nw">
+      <span class="nl">✦ v2 NEW — 時間帯別混雑予報</span>
+      <div class="cc">
+        <div class="cc-hd">
+          <div class="cc-title">📊 1日の混雑推移</div>
+          <div class="leg">
+            <div class="li"><div class="ld2" style="background:var(--indigo);border:1px solid #fff;"></div>現在</div>
+            <div class="li"><div class="ld2" style="background:var(--yellow);"></div>出発</div>
           </div>
         </div>
-        <div class="chart-wrap">
-          <div class="chart-bars" id="chartBars"></div>
-          <div class="chart-xlabels" id="chartLabels"></div>
-        </div>
-        <div class="cong-hint">
-          <span><span style="display:inline-block;width:8px;height:8px;border-radius:1px;background:var(--green);"></span>空き</span>
-          <span><span style="display:inline-block;width:8px;height:8px;border-radius:1px;background:var(--yellow);"></span>やや混</span>
-          <span><span style="display:inline-block;width:8px;height:8px;border-radius:1px;background:var(--orange);"></span>混雑</span>
-          <span><span style="display:inline-block;width:8px;height:8px;border-radius:1px;background:var(--red);"></span>激混</span>
-          <span style="margin-left:auto;font-size:0.58rem;">※平均的な傾向（モック）</span>
+        <div class="bars" id="bars"></div>
+        <div class="xlabs" id="xlabs"></div>
+        <div class="ch">
+          <span><span class="dot" style="background:var(--green);"></span>空き</span>
+          <span><span class="dot" style="background:var(--yellow);"></span>やや混</span>
+          <span><span class="dot" style="background:var(--orange);"></span>混雑</span>
+          <span><span class="dot" style="background:var(--red);"></span>激混</span>
+          <span style="margin-left:auto;font-size:0.58rem;">※平均的な傾向</span>
         </div>
       </div>
     </div>
 
-    <!-- Seat -->
-    <div class="seat-card">
-      <div class="seat-title">🪑 乗車位置ガイド（余裕ルート）</div>
-      <div class="car-grid" id="carGrid"></div>
-      <div class="car-hint">緑:空き余裕　黄:やや混　赤:混雑</div>
-      <div style="font-size:0.72rem;color:var(--indigo-light);margin-top:0.6rem;" id="boardingHint"></div>
+    <!-- SEAT -->
+    <div class="seat">
+      <div class="seat-t">🪑 乗車位置ガイド（余裕ルート）</div>
+      <div class="cg" id="cg"></div>
+      <div class="ch2">緑:空き　黄:やや混　赤:混雑</div>
+      <div style="font-size:0.72rem;color:var(--il);margin-top:0.6rem;" id="bh"></div>
     </div>
 
-    <!-- ★ NEW: Save Route -->
-    <div class="new-wrap">
-      <span class="new-label">✦ v2 NEW — よく使うルートを保存</span>
-      <div class="save-card">
-        <div class="save-text"><strong id="saveLabel">このルートを保存</strong>ワンタップで呼び出せます（最大3件）</div>
-        <button class="save-btn" id="saveBtn" onclick="saveCurrentRoute()">⭐ 保存する</button>
+    <!-- SAVE -->
+    <div class="nw">
+      <span class="nl">✦ v2 NEW — よく使うルートを保存</span>
+      <div class="sv">
+        <div class="sv-t"><strong id="svLab">このルートを保存</strong>ワンタップで呼び出せます（最大3件）</div>
+        <button class="svbtn" id="svBtn" onclick="saveRoute()">⭐ 保存する</button>
       </div>
     </div>
 
-    <!-- Notify -->
-    <div class="notify-card">
-      <div class="notify-text"><strong>出発リマインダー</strong><br>乗り換え<span id="notifyMins">5</span>分前に通知します</div>
-      <button class="remind-btn" id="remindBtn" onclick="toggleRemind()">🔔 セット</button>
+    <!-- NOTIFY -->
+    <div class="nc">
+      <div class="nt"><strong>出発リマインダー</strong><br>乗り換え<span id="ntM">5</span>分前に通知します</div>
+      <button class="rbtn" id="rb" onclick="remind()">🔔 セット</button>
     </div>
   </div>
 
-  <div class="empty-state" id="emptyState">
-    <span class="empty-icon">🚃</span>
-    出発駅・到着駅・時刻を選んで<br>「余裕ルートを探す」を押してください
-  </div>
+  <div class="empty" id="empty"><span>🚃</span>出発駅・到着駅・時刻を選んで<br>「余裕ルートを探す」を押してください</div>
 </main>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATIONS (20駅) ──────────────────────────────────────────
-const STATIONS = [
-  '渋谷','新宿','池袋','品川','横浜','東京','秋葉原','上野',
-  '恵比寿','目黒','五反田','大崎','川崎','武蔵小杉',
-  '北千住','日暮里','田端','駒込','有楽町','神田'
-];
+// ===== STATIONS =====
+const STATIONS=['渋谷','新宿','池袋','品川','横浜','東京','秋葉原','上野','恵比寿','目黒','五反田','大崎','川崎','武蔵小杉','北千住','日暮里','田端','駒込','有楽町','神田'];
 
-// ── ROUTES（時刻は動的計算。earlyMins=何分早く出るか、dur=所要分数）──────
-const ROUTES = {
-  "渋谷→新宿":{earlyMins:3,normalDur:16,yoyuuDur:23,normal:{transfer:"代々木",bufMin:2,crowd:82,seat:18},yoyuu:{transfer:"代々木",bufMin:9,crowd:44,seat:71},insight:"通常ルートは代々木の乗り換えがギリギリ2分。余裕ルートは9分確保できるのでホームが混んでも安心です。"},
-  "渋谷→池袋":{earlyMins:5,normalDur:29,yoyuuDur:37,normal:{transfer:"新宿",bufMin:3,crowd:88,seat:12},yoyuu:{transfer:"新宿",bufMin:12,crowd:52,seat:65},insight:"通常ルートの新宿乗り換え3分は朝ラッシュで最も危険なゾーン。余裕ルートで12分確保すれば心拍数が正常になります。"},
-  "渋谷→東京":{earlyMins:5,normalDur:35,yoyuuDur:42,normal:{transfer:"品川",bufMin:2,crowd:91,seat:8},yoyuu:{transfer:"恵比寿",bufMin:10,crowd:38,seat:78},insight:"山手線→東海道線の品川乗り換えは朝のボトルネック最大区間。恵比寿経由余裕ルートで混雑を回避できます。"},
-  "新宿→東京":{earlyMins:5,normalDur:28,yoyuuDur:36,normal:{transfer:"秋葉原",bufMin:3,crowd:85,seat:15},yoyuu:{transfer:"秋葉原",bufMin:11,crowd:42,seat:68},insight:"中央線快速は新宿発が超満員。余裕ルートは5分早く出発するだけで座席確保率が4倍以上になります。"},
-  "新宿→池袋":{earlyMins:4,normalDur:10,yoyuuDur:18,normal:{transfer:"−",bufMin:0,crowd:78,seat:20},yoyuu:{transfer:"−",bufMin:0,crowd:35,seat:72},insight:"山手線直通。4分早い電車で混雑を大幅に回避。座席確保率が3.6倍に！"},
-  "池袋→東京":{earlyMins:6,normalDur:29,yoyuuDur:38,normal:{transfer:"神田",bufMin:2,crowd:89,seat:11},yoyuu:{transfer:"神田",bufMin:9,crowd:50,seat:62},insight:"神田での乗り換えバッファが2分→9分に。2分だと走ることになりますが、9分なら余裕でトイレも行けます。"},
-  "品川→東京":{earlyMins:5,normalDur:14,yoyuuDur:22,normal:{transfer:"−",bufMin:0,crowd:87,seat:13},yoyuu:{transfer:"−",bufMin:0,crowd:41,seat:70},insight:"東海道線直通。5分早い電車で座席確保率が5倍以上になります。"},
-  "横浜→新宿":{earlyMins:10,normalDur:45,yoyuuDur:59,normal:{transfer:"渋谷",bufMin:3,crowd:90,seat:9},yoyuu:{transfer:"武蔵小杉",bufMin:11,crowd:48,seat:60},insight:"渋谷乗り換え3分は朝の横須賀線→副都心線で最も危険な区間。武蔵小杉経由で11分確保＋混雑回避が最善策。"},
-  "秋葉原→池袋":{earlyMins:5,normalDur:22,yoyuuDur:30,normal:{transfer:"上野",bufMin:3,crowd:76,seat:22},yoyuu:{transfer:"上野",bufMin:10,crowd:43,seat:65},insight:"上野での乗り換えは朝のラッシュで3分では厳しい。10分確保でコンビニ寄り道も可能になります。"},
-  "恵比寿→新宿":{earlyMins:4,normalDur:13,yoyuuDur:21,normal:{transfer:"−",bufMin:0,crowd:72,seat:22},yoyuu:{transfer:"−",bufMin:0,crowd:35,seat:68},insight:"山手線直通。4分早い電車でガラリと変わります。恵比寿発の余裕ルートは穴場の乗り方です。"},
-  "目黒→東京":{earlyMins:5,normalDur:32,yoyuuDur:40,normal:{transfer:"品川",bufMin:3,crowd:80,seat:18},yoyuu:{transfer:"大崎",bufMin:10,crowd:45,seat:65},insight:"大崎乗り換えは品川に比べてホームが広く移動しやすい。余裕ルートで10分確保して人混みを避けましょう。"},
-  "川崎→東京":{earlyMins:6,normalDur:32,yoyuuDur:41,normal:{transfer:"−",bufMin:0,crowd:90,seat:10},yoyuu:{transfer:"−",bufMin:0,crowd:48,seat:62},insight:"東海道線直通。6分早い電車で座席確保率が6倍に。川崎始発の優先確保は朝の鉄板テクニックです。"},
-  "武蔵小杉→新宿":{earlyMins:8,normalDur:37,yoyuuDur:50,normal:{transfer:"渋谷",bufMin:2,crowd:92,seat:8},yoyuu:{transfer:"二子玉川",bufMin:11,crowd:50,seat:58},insight:"武蔵小杉は混雑の名所。渋谷での乗り換えをなくして大井町線経由にするだけで別路線になります。"},
-  "北千住→東京":{earlyMins:5,normalDur:25,yoyuuDur:33,normal:{transfer:"日比谷",bufMin:2,crowd:86,seat:14},yoyuu:{transfer:"日比谷",bufMin:9,crowd:48,seat:60},insight:"日比谷乗り換え2分はラッシュ時に地下鉄で最も混む場所の一つ。9分確保で別世界になります。"},
-  "上野→新宿":{earlyMins:5,normalDur:27,yoyuuDur:35,normal:{transfer:"秋葉原",bufMin:3,crowd:78,seat:20},yoyuu:{transfer:"秋葉原",bufMin:10,crowd:42,seat:65},insight:"中央線への乗り換えは秋葉原で3分は少し短め。10分あれば乗車位置を選べて着席率も上がります。"},
-  "有楽町→池袋":{earlyMins:4,normalDur:20,yoyuuDur:27,normal:{transfer:"−",bufMin:0,crowd:75,seat:25},yoyuu:{transfer:"−",bufMin:0,crowd:38,seat:70},insight:"有楽町線直通。4分早い電車で混雑度が半分以下に。穴場の時間帯です。"},
-  "神田→渋谷":{earlyMins:5,normalDur:26,yoyuuDur:34,normal:{transfer:"新宿",bufMin:3,crowd:83,seat:16},yoyuu:{transfer:"新宿",bufMin:10,crowd:44,seat:66},insight:"新宿乗り換え3分は危険水域。余裕ルートで10分確保すれば、慌てずに乗り換えができます。"}
+// ===== ROUTES =====
+// earlyMins: 余裕ルートは通常より何分早く出発するか
+// normalDur / yoyuuDur: 所要時間（分）
+// 時刻は search() 時のユーザー入力から動的に計算する
+const R={
+  "渋谷→新宿":{e:3,nd:16,yd:23,n:{tr:"代々木",b:2,c:82,s:18},y:{tr:"代々木",b:9,c:44,s:71},ins:"代々木の乗り換えが通常2分→余裕9分に。ホームが混んでも安心です。"},
+  "渋谷→池袋":{e:5,nd:29,yd:37,n:{tr:"新宿",b:3,c:88,s:12},y:{tr:"新宿",b:12,c:52,s:65},ins:"新宿乗り換え3分は朝ラッシュ最大の危険ゾーン。12分確保で心拍数が正常になります。"},
+  "渋谷→東京":{e:5,nd:35,yd:42,n:{tr:"品川",b:2,c:91,s:8},y:{tr:"恵比寿",b:10,c:38,s:78},ins:"品川の乗り換えは朝のボトルネック。恵比寿経由の余裕ルートで混雑を回避できます。"},
+  "新宿→東京":{e:5,nd:28,yd:36,n:{tr:"秋葉原",b:3,c:85,s:15},y:{tr:"秋葉原",b:11,c:42,s:68},ins:"中央線快速は新宿発が超満員。5分早く出るだけで座席確保率が4倍以上になります。"},
+  "新宿→池袋":{e:4,nd:10,yd:18,n:{tr:"−",b:0,c:78,s:20},y:{tr:"−",b:0,c:35,s:72},ins:"山手線直通。4分早い電車で混雑を大幅に回避。座席確保率が3.6倍に！"},
+  "池袋→東京":{e:6,nd:29,yd:38,n:{tr:"神田",b:2,c:89,s:11},y:{tr:"神田",b:9,c:50,s:62},ins:"神田乗り換え2分→9分。9分あればトイレも行けます。"},
+  "品川→東京":{e:5,nd:14,yd:22,n:{tr:"−",b:0,c:87,s:13},y:{tr:"−",b:0,c:41,s:70},ins:"東海道線直通。5分早い電車で座席確保率が5倍以上になります。"},
+  "横浜→新宿":{e:10,nd:45,yd:59,n:{tr:"渋谷",b:3,c:90,s:9},y:{tr:"武蔵小杉",b:11,c:48,s:60},ins:"渋谷乗り換え3分は横須賀線→副都心線の最大難所。武蔵小杉経由で11分確保できます。"},
+  "秋葉原→池袋":{e:5,nd:22,yd:30,n:{tr:"上野",b:3,c:76,s:22},y:{tr:"上野",b:10,c:43,s:65},ins:"上野乗り換え3分は厳しい。10分確保でコンビニ寄り道も可能になります。"},
+  "恵比寿→新宿":{e:4,nd:13,yd:21,n:{tr:"−",b:0,c:72,s:22},y:{tr:"−",b:0,c:35,s:68},ins:"山手線直通。4分早い電車でガラリと変わります。恵比寿発は穴場の乗り方です。"},
+  "目黒→東京":{e:5,nd:32,yd:40,n:{tr:"品川",b:3,c:80,s:18},y:{tr:"大崎",b:10,c:45,s:65},ins:"大崎乗り換えはホームが広く移動しやすい。10分確保して人混みを避けましょう。"},
+  "川崎→東京":{e:6,nd:32,yd:41,n:{tr:"−",b:0,c:90,s:10},y:{tr:"−",b:0,c:48,s:62},ins:"東海道線直通。6分早い電車で座席確保率が6倍に。川崎始発の優先確保は朝の鉄板テクニックです。"},
+  "武蔵小杉→新宿":{e:8,nd:37,yd:50,n:{tr:"渋谷",b:2,c:92,s:8},y:{tr:"二子玉川",b:11,c:50,s:58},ins:"武蔵小杉は混雑の名所。大井町線経由に変えるだけで別世界になります。"},
+  "北千住→東京":{e:5,nd:25,yd:33,n:{tr:"日比谷",b:2,c:86,s:14},y:{tr:"日比谷",b:9,c:48,s:60},ins:"日比谷乗り換え2分は地下鉄最大の混雑ゾーン。9分確保で別世界になります。"},
+  "上野→新宿":{e:5,nd:27,yd:35,n:{tr:"秋葉原",b:3,c:78,s:20},y:{tr:"秋葉原",b:10,c:42,s:65},ins:"秋葉原乗り換え3分は少し短め。10分あれば乗車位置を選べて着席率も上がります。"},
+  "有楽町→池袋":{e:4,nd:20,yd:27,n:{tr:"−",b:0,c:75,s:25},y:{tr:"−",b:0,c:38,s:70},ins:"有楽町線直通。4分早い電車で混雑度が半分以下に。"},
+  "神田→渋谷":{e:5,nd:26,yd:34,n:{tr:"新宿",b:3,c:83,s:16},y:{tr:"新宿",b:10,c:44,s:66},ins:"新宿乗り換え3分は危険水域。10分確保すれば慌てずに乗り換えができます。"}
 };
 
-// ── 時刻を入力値から動的計算 ────────────────────────────────────
-function calcTimes(depStr, normalDur, yoyuuDur, earlyMins) {
-  const [hh,mm] = depStr.split(':').map(Number);
-  const normalDepMin = hh*60+mm;
-  const yoyuuDepMin  = normalDepMin - earlyMins;
-  const fmt = m => {
-    const t = ((m%1440)+1440)%1440;
-    return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
-  };
-  return {
-    normalTime:  fmt(normalDepMin)+'→'+fmt(normalDepMin+normalDur),
-    yoyuuTime:   fmt(yoyuuDepMin) +'→'+fmt(yoyuuDepMin+yoyuuDur),
-    normalDurStr: normalDur+'分',
-    yoyuuDurStr:  yoyuuDur+'分',
-    yoyuuDepStr:  fmt(yoyuuDepMin),
+// 混雑プロファイル（0〜23時）
+const HP=[3,2,2,2,5,12,50,82,90,65,44,40,44,42,44,52,70,85,78,58,40,28,16,8];
+
+// ===== 時刻フォーマット =====
+const fmt=m=>{const t=((m%1440)+1440)%1440;return String(~~(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');};
+
+// ===== 入力時刻から各ルートの時刻を計算 =====
+function calcTimes(depStr,nd,yd,earlyMins){
+  const [hh,mm]=depStr.split(':').map(Number);
+  const nDep=hh*60+mm;
+  const yDep=nDep-earlyMins;
+  return{
+    nTime:fmt(nDep)+'→'+fmt(nDep+nd),
+    yTime:fmt(yDep)+'→'+fmt(yDep+yd),
+    nDurStr:nd+'分',
+    yDurStr:yd+'分',
+    yDepStr:fmt(yDep),
     earlyMins
   };
 }
 
-// ── HOURLY CONGESTION (0-23時) ────────────────────────────────
-const HOUR_PROFILE = [3,2,2,2,5,12,50,82,90,65,44,40,44,42,44,52,70,85,78,58,40,28,16,8];
+// ===== STATE =====
+let cur=null,tick=null;
 
-// ── STATE ─────────────────────────────────────────────────────
-let currentRoute = null;
-let countdownTick = null;
-
-// ── INIT ─────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', ()=>{
-  const fSel = document.getElementById('fromStation');
-  const tSel = document.getElementById('toStation');
-  STATIONS.forEach((s,i)=>{
-    fSel.appendChild(new Option(s,s,i===0,i===0));
-    tSel.appendChild(new Option(s,s,i===1,i===1));
-  });
-  const now = new Date();
-  const pad = n=>String(n).padStart(2,'0');
-  document.getElementById('depTime').value = pad(now.getHours())+':'+pad(now.getMinutes());
-  const arr = new Date(now.getTime()+3600000);
-  document.getElementById('arrTime').value  = pad(arr.getHours())+':'+pad(arr.getMinutes());
+// ===== INIT =====
+addEventListener('DOMContentLoaded',()=>{
+  const f=document.getElementById('from'),t=document.getElementById('to');
+  STATIONS.forEach((s,i)=>{f.add(new Option(s,s,i===0,i===0));t.add(new Option(s,s,i===1,i===1));});
+  const now=new Date(),pad=n=>String(n).padStart(2,'0');
+  document.getElementById('dep').value=pad(now.getHours())+':'+pad(now.getMinutes());
+  const a=new Date(now.getTime()+3600000);
+  document.getElementById('arr').value=pad(a.getHours())+':'+pad(a.getMinutes());
   renderSaved();
 });
 
-// ── SWAP ─────────────────────────────────────────────────────
-function swapStations(){
-  const f=document.getElementById('fromStation'), t=document.getElementById('toStation');
-  [f.value,t.value]=[t.value,f.value];
+// ===== SWAP =====
+function swap(){const f=document.getElementById('from'),t=document.getElementById('to');[f.value,t.value]=[t.value,f.value];}
+
+// ===== SEARCH =====
+function search(){
+  const from=document.getElementById('from').value,to=document.getElementById('to').value;
+  if(from===to){toast('出発駅と到着駅が同じです','e');return;}
+  document.getElementById('res').classList.remove('on');
+  document.getElementById('empty').style.display='none';
+  document.getElementById('ld').classList.add('on');
+  setTimeout(()=>{document.getElementById('ld').classList.remove('on');render(from,to);},1000);
 }
 
-// ── SEARCH ───────────────────────────────────────────────────
-function doSearch(){
-  const from=document.getElementById('fromStation').value;
-  const to=document.getElementById('toStation').value;
-  if(from===to){showToast('出発駅と到着駅が同じです','err');return;}
-  document.getElementById('results').classList.remove('show');
-  document.getElementById('emptyState').style.display='none';
-  document.getElementById('loading').classList.add('show');
-  setTimeout(()=>{
-    document.getElementById('loading').classList.remove('show');
-    renderResults(from,to);
-  },1000);
-}
+// ===== RENDER =====
+function render(from,to){
+  // ルートデータ取得
+  const key=R[from+'→'+to]?from+'→'+to:R[to+'→'+from]?to+'→'+from:null;
+  const data=key?R[key]:{e:7,nd:45,yd:54,n:{tr:"新宿",b:3,c:80,s:18},y:{tr:"新宿",b:10,c:45,s:65},ins:`${from}→${to}ルートでも余裕ルートで乗り換えバッファが3分→10分に拡大します。`};
 
-// ── RENDER RESULTS ────────────────────────────────────────────
-function renderResults(from,to){
-  const key=getKey(from,to);
-  const data=key?ROUTES[key]:makeFallback(from,to);
-  const dep=document.getElementById('depTime').value;
+  // ユーザーの入力時刻を取得して計算
+  const depStr=document.getElementById('dep').value;
+  const T=calcTimes(depStr,data.nd,data.yd,data.e);
 
-  // 入力時刻から動的に時刻を計算
-  const times=calcTimes(dep, data.normalDur, data.yoyuuDur, data.earlyMins);
-  currentRoute={from,to,dep,data,yoyuuDep:times.yoyuuDepStr};
+  cur={from,to,depStr,data,yDepStr:T.yDepStr};
 
-  document.getElementById('resultsLabel').textContent=from+' → '+to+'  検索結果';
+  // ラベル
+  document.getElementById('rl').textContent=from+' → '+to+'  検索結果';
 
-  const n=data.normal, y=data.yoyuu;
-  setText('normalTime',times.normalTime);
-  setText('normalDuration',times.normalDurStr+' · '+(n.transfer==='−'?'直通':n.transfer+'乗換'));
-  setText('normalTransfer',n.transfer==='−'?'直通（乗換なし）':n.transfer);
-  setBuffer('normalBuffer',n.bufMin,n.transfer);
-  setText('normalCrowdPct',n.crowd+'%');
-  setText('normalSeatPct',n.seat+'%');
+  // 通常ルート
+  const n=data.n;
+  set('nTime',T.nTime);
+  set('nDur',T.nDurStr+' · '+(n.tr==='−'?'直通':n.tr+'乗換'));
+  set('nTr',n.tr==='−'?'直通（乗換なし）':n.tr);
+  buf('nBuf',n.b,n.tr);
+  set('nCPct',n.c+'%');set('nSPct',n.s+'%');
 
-  setText('yoyuuTime',times.yoyuuTime);
-  setText('yoyuuDuration',times.yoyuuDurStr+' · '+(y.transfer==='−'?'直通':y.transfer+'乗換')+' （'+times.earlyMins+'分早く出発）');
-  setText('yoyuuTransfer',y.transfer==='−'?'直通（乗換なし）':y.transfer);
-  setBuffer('yoyuuBuffer',y.bufMin,y.transfer);
-  setText('yoyuuCrowdPct',y.crowd+'%');
-  setText('yoyuuSeatPct',y.seat+'%');
+  // 余裕ルート
+  const y=data.y;
+  set('yTime',T.yTime);
+  set('yDur',T.yDurStr+' · '+(y.tr==='−'?'直通':y.tr+'乗換')+' （'+T.earlyMins+'分早く出発）');
+  set('yTr',y.tr==='−'?'直通（乗換なし）':y.tr);
+  buf('yBuf',y.b,y.tr,true);
+  set('yCPct',y.c+'%');set('ySPct',y.s+'%');
 
-  document.getElementById('insightText').innerHTML=data.insight
-    .replace(/(\d+分)/g,'<strong>$1</strong>')
-    .replace(/(余裕ルート|通常ルート)/g,'<strong>$1</strong>');
+  // インサイト
+  document.getElementById('ins').innerHTML=data.ins.replace(/(\d+分)/g,'<strong>$1</strong>').replace(/(余裕ルート|通常ルート)/g,'<strong>$1</strong>');
 
-  setText('notifyMins',y.transfer==='−'?'3':'5');
+  // 通知分数
+  set('ntM',y.tr==='−'?'3':'5');
 
-  renderCarGrid(y.crowd);
-  setText('boardingHint','▶ '+(y.transfer!=='−'?y.transfer+'乗換ホームに近い':'')+'先頭から3〜4両目が最も空いています');
+  // 乗車ガイド
+  carGrid(y.c);
+  set('bh','▶ '+(y.tr!=='−'?y.tr+'乗換ホームに近い':'')+'先頭から3〜4両目が最も空いています');
 
-  // Save btn state
-  const alreadySaved=loadSaved().some(r=>r.from===from&&r.to===to);
-  const sb=document.getElementById('saveBtn');
-  setText('saveLabel',from+' → '+to+' を保存');
-  if(alreadySaved){sb.textContent='✅ 保存済み';sb.classList.add('saved');}
+  // 保存ボタン状態
+  const saved=getSaved();
+  const already=saved.some(r=>r.from===from&&r.to===to);
+  const sb=document.getElementById('svBtn');
+  set('svLab',from+' → '+to+' を保存');
+  if(already){sb.textContent='✅ 保存済み';sb.classList.add('saved');}
   else{sb.textContent='⭐ 保存する';sb.classList.remove('saved');}
 
-  const rb=document.getElementById('remindBtn');
-  rb.textContent='🔔 セット';rb.classList.remove('active');
+  // リマインダーリセット
+  const rb=document.getElementById('rb');rb.textContent='🔔 セット';rb.classList.remove('active');
 
-  document.getElementById('results').classList.add('show');
+  document.getElementById('res').classList.add('on');
 
+  // メーターアニメ
   setTimeout(()=>{
-    animBar('normalCrowdBar',n.crowd,'red');
-    animBar('normalSeatBar',n.seat,n.seat<30?'red':'yellow');
-    animBar('yoyuuCrowdBar',y.crowd,y.crowd<50?'green':'yellow');
-    animBar('yoyuuSeatBar',y.seat,y.seat>60?'green':'yellow');
+    anim('nCBar',n.c,'red');anim('nSBar',n.s,n.s<30?'red':'yel');
+    anim('yCBar',y.c,y.c<50?'grn':'yel');anim('ySBar',y.s,y.s>60?'grn':'yel');
   },50);
 
-  startCountdown(times.yoyuuDepStr);  // 余裕ルートの出発時刻にカウント
-  renderChart(dep);
+  // カウントダウン（余裕ルートの出発時刻へ）
+  countdown(T.yDepStr);
+
+  // 混雑グラフ
+  chart(depStr);
 }
 
-// ── HELPERS ──────────────────────────────────────────────────
-function getKey(f,t){return ROUTES[f+'→'+t]?f+'→'+t:ROUTES[t+'→'+f]?t+'→'+f:null;}
-function setText(id,v){document.getElementById(id).textContent=v;}
-function setBuffer(id,min,st){
+// ===== HELPERS =====
+function set(id,v){document.getElementById(id).textContent=v;}
+function buf(id,min,tr,isY){
   const el=document.getElementById(id);
-  if(st==='−'){el.textContent='直通';el.className='buffer-badge buf-green';return;}
+  if(tr==='−'){el.textContent='直通';el.className='bb bg';return;}
   el.textContent=min+'分';
-  el.className='buffer-badge '+(min<=3?'buf-red':min<=6?'buf-yellow':'buf-green');
+  el.className='bb '+(min<=3?'br':min<=6?'by':'bg');
 }
-function animBar(id,pct,color){
-  const el=document.getElementById(id);
-  el.className='meter-fill '+color;el.style.width=pct+'%';
-}
-function renderCarGrid(crowd){
-  const g=document.getElementById('carGrid');g.innerHTML='';
+function anim(id,pct,cls){const el=document.getElementById(id);el.className='mf '+cls;el.style.width=pct+'%';}
+function carGrid(c){
+  const g=document.getElementById('cg');g.innerHTML='';
   for(let i=0;i<10;i++){
-    const d=document.createElement('div');
-    const r=Math.random();
-    let cls=(i>=2&&i<=3)?'car-block car-empty':crowd>60?'car-block '+(r<0.5?'car-crowded':r<0.75?'car-medium':'car-empty'):'car-block '+(r<0.3?'car-crowded':r<0.5?'car-medium':'car-empty');
-    d.className=cls;d.textContent=i+1;
-    d.style.cssText='font-size:0.55rem;color:rgba(255,255,255,0.5);';
-    g.appendChild(d);
+    const d=document.createElement('div'),r=Math.random();
+    d.className='cb '+(i>=2&&i<=3?'ce':c>60?r<0.5?'cw':r<0.75?'cm':'ce':r<0.3?'cw':r<0.5?'cm':'ce');
+    d.textContent=i+1;g.appendChild(d);
   }
 }
-function makeFallback(from,to){
-  return{
-    earlyMins:7, normalDur:45, yoyuuDur:54,
-    normal:{transfer:"新宿",bufMin:3,crowd:80,seat:18},
-    yoyuu: {transfer:"新宿",bufMin:10,crowd:45,seat:65},
-    insight:from+'→'+to+'ルートでも余裕ルートで乗り換えバッファが3分→10分に拡大。朝のダッシュとはおさらばできます。'
-  };
-}
 
-// ── COUNTDOWN ────────────────────────────────────────────────
-function startCountdown(timeStr){
-  if(countdownTick)clearInterval(countdownTick);
-  function tick(){
-    const [hh,mm]=timeStr.split(':').map(Number);
-    const now=new Date(), dep=new Date();
+// ===== COUNTDOWN =====
+function countdown(depStr){
+  if(tick)clearInterval(tick);
+  function tick2(){
+    const [hh,mm]=depStr.split(':').map(Number);
+    const now=new Date(),dep=new Date();
     dep.setHours(hh,mm,0,0);
     if(dep<now)dep.setDate(dep.getDate()+1);
-    const diff=dep-now, total=Math.floor(diff/1000);
-    const mins=Math.floor(total/60), secs=total%60;
-    setText('cdMins',String(mins).padStart(2,'0'));
-    setText('cdSecs',String(secs).padStart(2,'0'));
-    setText('cdSub','出発時刻 '+timeStr+' まで残り');
-    const card=document.getElementById('countdownCard');
-    const st=document.getElementById('cdStatus');
-    if(mins<0){card.className='countdown-card red';st.textContent='出発時刻を過ぎました';}
-    else if(mins<5){card.className='countdown-card red';st.textContent='⚠️ 急いでください！';}
-    else if(mins<10){card.className='countdown-card yellow';st.textContent='そろそろ準備を';}
-    else{card.className='countdown-card green';st.textContent='余裕あり ✓';}
+    const diff=dep-now,total=~~(diff/1000);
+    const mins=~~(total/60),secs=total%60;
+    set('cdM',String(mins).padStart(2,'0'));
+    set('cdS',String(secs).padStart(2,'0'));
+    set('cdSub','出発時刻 '+depStr+' まで残り');
+    const card=document.getElementById('cdCard'),st=document.getElementById('cdSt');
+    if(mins<0){card.className='cd r';st.textContent='出発時刻を過ぎました';}
+    else if(mins<5){card.className='cd r';st.textContent='⚠️ 急いでください！';}
+    else if(mins<10){card.className='cd y';st.textContent='そろそろ準備を';}
+    else{card.className='cd g';st.textContent='余裕あり ✓';}
   }
-  tick();countdownTick=setInterval(tick,1000);
+  tick2();tick=setInterval(tick2,1000);
 }
 
-// ── CONGESTION CHART ─────────────────────────────────────────
-function renderChart(depTimeStr){
-  const barsEl=document.getElementById('chartBars');
-  const labsEl=document.getElementById('chartLabels');
-  barsEl.innerHTML='';labsEl.innerHTML='';
-
-  const nowH=new Date().getHours();
-  const depH=parseInt(depTimeStr.split(':')[0]);
+// ===== CHART =====
+function chart(depStr){
+  const bEl=document.getElementById('bars'),lEl=document.getElementById('xlabs');
+  bEl.innerHTML='';lEl.innerHTML='';
+  const nowH=new Date().getHours(),depH=parseInt(depStr);
   const hours=[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
-
   hours.forEach(h=>{
-    const pct=HOUR_PROFILE[h];
-    const isNow=h===nowH, isDep=h===depH;
-    let bg;
-    if(isNow)bg='var(--indigo)';
-    else if(isDep)bg='var(--yellow)';
-    else if(pct>=75)bg='var(--red)';
-    else if(pct>=55)bg='var(--orange)';
-    else if(pct>=30)bg='var(--yellow)';
-    else bg='var(--green)';
-
-    const bar=document.createElement('div');
-    bar.className='cbar'+(isNow?' now':'')+(isDep?' dep':'');
-    bar.innerHTML=`
-      <div class="cbar-tip">${h}時 ${pct}%</div>
-      <div class="cbar-fill" style="height:${pct}%;background:${bg};"></div>
-      ${isDep?'<div class="dep-tag">▲出発</div>':''}
-    `;
-    barsEl.appendChild(bar);
-
-    const lab=document.createElement('div');
-    lab.className='chart-xlabel';
-    lab.textContent=[6,8,10,12,14,16,18,20,22].includes(h)?(h+'時'):'';
-    labsEl.appendChild(lab);
+    const p=HP[h],isN=h===nowH,isD=h===depH;
+    let bg=isN?'var(--indigo)':isD?'var(--yellow)':p>=75?'var(--red)':p>=55?'var(--orange)':p>=30?'var(--yellow)':'var(--green)';
+    const b=document.createElement('div');
+    b.className='bar'+(isN?' now':'')+(isD?' dep':'');
+    b.innerHTML=`<div class="btt">${h}時 ${p}%</div><div class="barf" style="height:${p}%;background:${bg};"></div><div class="dep-tag">▲出発</div>`;
+    bEl.appendChild(b);
+    const l=document.createElement('div');
+    l.className='xlab';l.textContent=[6,8,10,12,14,16,18,20,22].includes(h)?(h+'時'):'';
+    lEl.appendChild(l);
   });
 }
 
-// ── SAVED ROUTES ─────────────────────────────────────────────
-const SAVE_KEY='yoyuu_v2';
-function loadSaved(){try{return JSON.parse(localStorage.getItem(SAVE_KEY)||'[]');}catch{return[];}}
+// ===== SAVED ROUTES =====
+const SK='yoyuu_v2';
+function getSaved(){try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch{return[];}}
 
-function saveCurrentRoute(){
-  if(!currentRoute){showToast('先にルートを検索してください','warn');return;}
-  const{from,to,dep}=currentRoute;
-  const saved=loadSaved();
-  if(saved.some(r=>r.from===from&&r.to===to)){showToast('すでに保存済みです');return;}
+function saveRoute(){
+  if(!cur){toast('先にルートを検索してください','w');return;}
+  const{from,to,depStr}=cur,saved=getSaved();
+  if(saved.some(r=>r.from===from&&r.to===to)){toast('すでに保存済みです');return;}
   if(saved.length>=3)saved.shift();
-  saved.push({from,to,dep});
-  localStorage.setItem(SAVE_KEY,JSON.stringify(saved));
-  const sb=document.getElementById('saveBtn');
-  sb.textContent='✅ 保存済み';sb.classList.add('saved');
-  renderSaved();
-  showToast('ルートを保存しました ⭐');
+  saved.push({from,to,dep:depStr});
+  localStorage.setItem(SK,JSON.stringify(saved));
+  const sb=document.getElementById('svBtn');sb.textContent='✅ 保存済み';sb.classList.add('saved');
+  renderSaved();toast('ルートを保存しました ⭐');
 }
 
-function clearAllSaved(){
-  localStorage.removeItem(SAVE_KEY);renderSaved();
-  showToast('保存済みルートをクリアしました');
-}
+function clearSaved(){localStorage.removeItem(SK);renderSaved();toast('クリアしました');}
 
 function renderSaved(){
-  const saved=loadSaved();
-  const sec=document.getElementById('savedSection');
-  const cards=document.getElementById('savedCards');
-  if(!saved.length){sec.classList.remove('show');return;}
-  sec.classList.add('show');
-  cards.innerHTML='';
+  const saved=getSaved(),sec=document.getElementById('savedSec'),list=document.getElementById('savedList');
+  if(!saved.length){sec.classList.remove('on');return;}
+  sec.classList.add('on');list.innerHTML='';
   saved.forEach(r=>{
-    const d=document.createElement('div');
-    d.className='saved-card';
+    const d=document.createElement('div');d.className='scard';
     d.onclick=()=>{
-      document.getElementById('fromStation').value=r.from;
-      document.getElementById('toStation').value=r.to;
-      document.getElementById('depTime').value=r.dep;
-      document.querySelector('.search-card').scrollIntoView({behavior:'smooth'});
-      setTimeout(doSearch,400);
+      document.getElementById('from').value=r.from;
+      document.getElementById('to').value=r.to;
+      document.getElementById('dep').value=r.dep;
+      document.querySelector('.sc').scrollIntoView({behavior:'smooth'});
+      setTimeout(search,400);
     };
-    d.innerHTML=`<div class="saved-card-star">⭐</div><div class="saved-card-route">${r.from} → ${r.to}</div><div class="saved-card-time">出発 ${r.dep}</div>`;
-    cards.appendChild(d);
+    d.innerHTML=`<div class="scard-star">⭐</div><div class="scard-route">${r.from} → ${r.to}</div><div class="scard-time">出発 ${r.dep}</div>`;
+    list.appendChild(d);
   });
 }
 
-// ── REMIND ───────────────────────────────────────────────────
-function toggleRemind(){
-  const btn=document.getElementById('remindBtn');
-  if(btn.classList.contains('active')){btn.textContent='🔔 セット';btn.classList.remove('active');showToast('リマインダーを解除しました');}
-  else{btn.textContent='✅ セット済み';btn.classList.add('active');showToast('出発'+document.getElementById('depTime').value+'の'+document.getElementById('notifyMins').textContent+'分前に通知します');}
+// ===== REMIND =====
+function remind(){
+  const rb=document.getElementById('rb');
+  if(rb.classList.contains('active')){rb.textContent='🔔 セット';rb.classList.remove('active');toast('リマインダーを解除しました');}
+  else{rb.textContent='✅ セット済み';rb.classList.add('active');toast('出発'+document.getElementById('dep').value+'の'+document.getElementById('ntM').textContent+'分前に通知します');}
 }
 
-// ── TOAST ────────────────────────────────────────────────────
-function showToast(msg,cls=''){
+// ===== TOAST =====
+function toast(msg,cls=''){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast show'+(cls?' '+cls:'');
+  t.textContent=msg;t.className='toast on'+(cls?' '+cls:'');
   setTimeout(()=>t.className='toast',2400);
 }
 </script>
